@@ -1,0 +1,7 @@
+node_modules
+dist
+dist-ssr
+*.local
+
+/frontend/node_modules
+/backend/__pycache__
