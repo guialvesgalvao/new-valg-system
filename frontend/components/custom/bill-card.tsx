@@ -1,22 +1,21 @@
+import { IBill } from "@/shared/interface/IBill";
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-  } from "@/components/ui/card"
-  
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
-export function BillCard() {
+export function BillCard({ amount }: Readonly<IBill>) {
   return (
-    <Card>
+    <Card className="flex flex-col items-center ">
       <CardHeader>
-        <CardTitle>Card Title</CardTitle>
+        <CardTitle className="bold text-md">Card Title</CardTitle>
         <CardDescription>Card Description</CardDescription>
       </CardHeader>
       <CardContent>
-        <p>Card Content</p>
+        <p>R$ {amount}</p>
       </CardContent>
     </Card>
   );
