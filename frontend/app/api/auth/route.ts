@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 export async function validateUser(request: Request) {
-  console.log(request) // Lógica para buscar usuários
+  
   return NextResponse.json(request);
 }
 

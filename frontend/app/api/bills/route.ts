@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { faker } from '@faker-js/faker';
+import { create } from 'domain';
 
 export async function GET() {
   
@@ -8,7 +9,9 @@ export async function GET() {
   for ( let i = 0; i < 5; i++ ){
     bills.push({
       id: i,
-      amount: parseFloat(faker.commerce.price())
+      amount: parseFloat(faker.commerce.price()),
+      created_at: faker.date.recent(),
+      modified_at: faker.date.recent()
     }
     )
   } 
@@ -21,8 +24,6 @@ export async function PUT(req: Request) {
   try {
     const { id } = await req.json();
 
-    console.log(id);
-    console.log('id');
     return NextResponse.json({ id });
   } catch (error) {
     

@@ -1,24 +1,25 @@
-'use client'
-
-import { BillCard } from "@/components/custom/bill-card";
-import { BillsRepo } from "@/shared/repositories/bills-repo";
+import { Bill } from "@/shared/factories/bills-factory";
+import { BillsService } from "@/shared/services/bills-service";
 
 
-export default async function Main () {
+export default async function BillsPage() {
+  const billsService = new BillsService();
 
-        async function teste() {
-            const response = await fetch('http://localhost:3000/api/bills')
-            console.log(response)
-        } 
+  try {
+    // Chama o serviço diretamente no componente
+    const bills: Bill[] = await billsService.getBills();
 
-
-    return ( 
-        <div className="">
-            <button onClick={teste}>Clique me</button>
-            <BillCard 
-            id={1}
-            amount={39}
-            /> 
-        </div>
-    )
+    return (
+      <div>
+        <h1>List of Bills</h1>
+        <ul>
+          {bills.map((bill) => (
+            <li key={bill.id}>{bill.amount}</li>
+          ))}
+        </ul>
+      </div>
+    );
+  } catch (error) {
+    return <div>Error fetching bills: </div>;
+  }
 }

@@ -9,6 +9,9 @@ Esse é um projeto com o objetivo de poder organizar e controlar contas a pagar,
 - Zustand
 
 
+- React Hook Form
+- Zup
+
 Futuras Features:
 
 ✨ Adicionar MongoDB como banco para armazenar notas fiscais
