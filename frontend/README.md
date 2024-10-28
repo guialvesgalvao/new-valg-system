@@ -11,6 +11,7 @@ Esse é um projeto com o objetivo de poder organizar e controlar contas a pagar,
 
 - React Hook Form
 - Zup
+- Prisma
 
 Futuras Features:
 

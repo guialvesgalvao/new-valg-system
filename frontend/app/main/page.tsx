@@ -1,6 +1,5 @@
 "use client";
 
-import { Bill } from "@/shared/factories/bills-factory";
 import { BillsService } from "@/shared/services/bills-service";
 import { useQuery } from "@tanstack/react-query";
 
@@ -17,6 +16,7 @@ export default function BillsPage() {
   });
 
   if (error) return error;
+
   if (isLoading) return "Loading...";
 
   return (
