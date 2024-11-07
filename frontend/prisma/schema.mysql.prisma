@@ -1,10 +1,12 @@
-generator client {
-  provider = "prisma-client-js"
-}
-
+// prisma/schema.mysql.prisma
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL_MYSQL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/mysql"
 }
 
 model bills {

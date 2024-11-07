@@ -6,4 +6,5 @@ dist-ssr
 tasks.md
 
 /frontend/node_modules
+/frontend/generated
 /backend/__pycache__
