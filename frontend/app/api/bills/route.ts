@@ -1,12 +1,17 @@
 import { NextResponse } from "next/server";
 // import { faker } from "@faker-js/faker";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient as MySQLPrismaClient } from '../../../generated/mysql';
+import { PrismaClient as MongoDBPrismaClient } from '../../../generated/mongodb';
 
-const prisma = new PrismaClient();
+const mysqlPrisma = new MySQLPrismaClient();
+const mongodbPrisma = new MongoDBPrismaClient();
+
 
 export async function GET() {
   try {
-    const bills = await prisma.bills.findMany();
+    const bills = await mysqlPrisma.bills.findMany();
+    const teste = await mongodbPrisma.invoice.createMany({data: {id_reference: 3, name: 'teste3'}})
+    console.log(teste)
     return NextResponse.json(bills);
   } catch (error) {
     console.error(error);
@@ -17,7 +22,7 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const { bill_name, amount, due_date } = await req.json();
-    const newBill = await prisma.bills.create({
+    const newBill = await mysqlPrisma.bills.create({
       data: {
         amount,
         bill_name,
@@ -36,7 +41,7 @@ export async function PUT(req: Request) {
   try {
     const { id, amount, bill_name, due_date } = await req.json();
 
-    const updatedBill = await prisma.bills.update({
+    const updatedBill = await mysqlPrisma.bills.update({
       where: { id },
       data: {
         amount,
