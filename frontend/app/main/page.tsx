@@ -8,14 +8,14 @@ export default function BillsPage() {
 
   const {
     data: bills,
-    error,
+    isError,
     isLoading,
   } = useQuery({
     queryKey: ["bills"],
     queryFn: async () => await billsService.getBills(),
   });
 
-  if (error) return error;
+  if (isError) return <div>Erro na aplicação</div>;
 
   if (isLoading) return "Loading...";
 
