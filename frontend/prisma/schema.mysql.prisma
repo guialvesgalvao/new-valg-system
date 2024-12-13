@@ -1,0 +1,19 @@
+// prisma/schema.mysql.prisma
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL_MYSQL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/mysql"
+}
+
+model bills {
+  id         Int       @id @default(autoincrement())
+  amount     Decimal   @db.Decimal(10, 2)
+  bill_name  String    @db.VarChar(255)
+  due_date   DateTime  @db.Date
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  updated_at DateTime? @default(now()) @db.Timestamp(0)
+}

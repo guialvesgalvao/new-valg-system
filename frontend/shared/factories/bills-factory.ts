@@ -1,33 +1,45 @@
 import { BillsReponse } from "../interface/IBill";
 
-export class Bill { 
-    private _id: number;
-    private _amount: number;
+export class Bill {
+  private readonly _id: number;
+  private readonly _billName: string;
+  private readonly _amount: number;
+  private readonly _dueDate: Date;
 
-    private _createdAt: Date;
-    private _modifiedAt: Date;
+  private readonly _createdAt: Date;
+  private readonly _modifiedAt: Date;
 
-    constructor (data: BillsReponse){
-        this._id = data.id
-        this._amount = data.amount
+  constructor(data: BillsReponse) {
+    this._id = data.id;
+    this._billName = data.bill_name;
+    this._amount = data.amount;
+    this._dueDate = new Date(data.due_date);
 
-        this._createdAt = new Date(data.created_at)
-        this._modifiedAt = new Date(data.modified_at)
-    }   
+    this._createdAt = new Date(data.created_at);
+    this._modifiedAt = new Date(data.modified_at);
+  }
 
-    public get id(): number {
-        return this._id;
-    }
+  public get id(): number {
+    return this._id;
+  }
 
-    public get amount(): number {
-        return this._amount;
-    }
+  public get billName(): string {
+    return this._billName;
+  }
 
-    public get createdAt(): Date {
-        return this._createdAt;
-    }
+  public get amount(): number {
+    return this._amount;
+  }
 
-    public get modifiedAt(): Date {
-        return this._modifiedAt;
-    }
+  public get dueDate(): Date {
+    return this._dueDate;
+  }
+
+  public get createdAt(): Date {
+    return this._createdAt;
+  }
+
+  public get modifiedAt(): Date {
+    return this._modifiedAt;
+  }
 }

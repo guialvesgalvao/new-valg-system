@@ -1,41 +1,58 @@
 import { NextResponse } from "next/server";
-import { faker } from "@faker-js/faker";
+// import { faker } from "@faker-js/faker";
+import { PrismaClient as MySQLPrismaClient } from '../../../generated/mysql';
+import { PrismaClient as MongoDBPrismaClient } from '../../../generated/mongodb';
+
+const mysqlPrisma = new MySQLPrismaClient();
+const mongodbPrisma = new MongoDBPrismaClient();
+
 
 export async function GET() {
-  let bills = [];
-
-  for (let i = 0; i < 5; i++) {
-    bills.push({
-      id: i,
-      amount: parseFloat(faker.commerce.price()),
-      created_at: faker.date.recent(),
-      modified_at: faker.date.recent(),
-    });
+  try {
+    const bills = await mysqlPrisma.bills.findMany();
+    const teste = await mongodbPrisma.invoice.createMany({data: {id_reference: 3, name: 'teste3'}})
+    console.log(teste)
+    return NextResponse.json(bills);
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: "Faield to retrieve bills" });
   }
-
-  return NextResponse.json(bills);
 }
 
 export async function POST(req: Request) {
   try {
-    const { amount, created_at, modified_at } = JSON.parse(await req.text());
-
-    return NextResponse.json({
-      amount,
-      created_at,
-      modified_at,
+    const { bill_name, amount, due_date } = await req.json();
+    const newBill = await mysqlPrisma.bills.create({
+      data: {
+        amount,
+        bill_name,
+        due_date: new Date(due_date)
+      }
     });
+
+    return NextResponse.json(newBill);
   } catch (error) {
-    return NextResponse.json({ error });
+    console.error(error);
+    return NextResponse.json({ error: "Failed to create bill" });
   }
 }
 
 export async function PUT(req: Request) {
   try {
-    const { id } = await req.json();
+    const { id, amount, bill_name, due_date } = await req.json();
 
-    return NextResponse.json({ id });
+    const updatedBill = await mysqlPrisma.bills.update({
+      where: { id },
+      data: {
+        amount,
+        bill_name,
+        due_date: new Date(due_date)
+      }
+    })
+
+    return NextResponse.json(updatedBill);
   } catch (error) {
-    return NextResponse.json(error);
+    console.error(error);
+    return NextResponse.json({error: "Failed to Update bill"});
   }
 }
