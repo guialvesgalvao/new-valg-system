@@ -26,11 +26,11 @@ export const structuredBills = [
 export const unstructuredBills: IUnvalidatedBills[] = [
   {
     amount: 3500,
-    dueDate: new Date('2024-01-18T00:00:00.000Z')
+    due_date: new Date('2024-01-18T00:00:00.000Z')
   },
   {
     name: 'Conta de luz',
-    dueDate: new Date('2024-01-13T00:00:00.000Z')
+    due_date: new Date('2024-01-13T00:00:00.000Z')
   },
   {
     name: 'Comgás',
@@ -39,12 +39,12 @@ export const unstructuredBills: IUnvalidatedBills[] = [
   {
     name: 'Cartão de crédito',
     amount: 10000.35,
-    dueDate: new Date('2025-06-30T00:00:00.000Z')
+    due_date: new Date('2025-06-30T00:00:00.000Z')
   },
   {
     name: 'Cartão de crédito',
     amount: 10000.35,
-    dueDate: new Date('2025-06-30T00:00:00.000Z'),
+    due_date: new Date('2025-06-30T00:00:00.000Z'),
     isRecurring: true
   },
   {
@@ -54,7 +54,7 @@ export const unstructuredBills: IUnvalidatedBills[] = [
     amount: 10000.35,
   },
   {
-    dueDate: new Date('2025-06-30T00:00:00.000Z'),
+    due_date: new Date('2025-06-30T00:00:00.000Z'),
   },
 ]
 
