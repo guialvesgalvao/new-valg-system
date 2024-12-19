@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-export async function transformTextInAccount(userSpeech: string) {
+export async function transformTextInAccount(userSpeech: string): Promise<string> {
     try {
         const requestBody = {
             max_tokens: 200,

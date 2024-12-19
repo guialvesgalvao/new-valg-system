@@ -3,6 +3,8 @@ import pool from "../config/db";
 import { transformAccountToText } from "../services/transformAccountToText";
 import { IBillDBSchema } from "../shared/interfaces/IBill";
 import { billFormatter } from "../shared/formatters/billsFormatter";
+import { transformTextInAccount } from "../services/transformTextInAccount";
+import { validateBill } from "../services/validateBill";
 
 async function getBills(req: Request, res: Response): Promise<void> {
   const { isOverdue, returnMode } = req.query;
@@ -26,18 +28,38 @@ async function getBills(req: Request, res: Response): Promise<void> {
 }
 
 async function createBill(req: Request, res: Response) {
-  // identifica se a conta está em texto em JSON
-  // se JSON transformTextInAccount
-  const {} = req.body;
-  //valida a conta
+  const { dataType, data } = req.body;
 
-  //cria conta no banco
-
-  //retorna status code e conta atualizada com sucesso
   try {
-    console.log("getBill");
+    if (!data || !dataType) {
+      res.status(400).json({ error: "os parâmetros 'dataType' e 'data' são obrigatórios" });
+      return;
+    }
+
+    const bill = dataType === "text" ? await transformTextInAccount(data) : data;
+
+    if (!validateBill(bill)) {
+      res.status(400).json({ error: "A conta informada não possui nome, valor ou data de vencimento" });
+      return;
+    }
+
+    const SQLQuery = `
+        INSERT INTO bills (name, amount, due_date, status, is_generated_by_recurrence, user)
+        VALUES (?, ?, ?, ?, ?, ?)
+      `;
+
+    await pool.query(SQLQuery, [
+      bill.name,
+      bill.amount,
+      bill.due_date,
+      bill.status || "teste",
+      bill.isRecurring ? 1 : 0,
+      "default_user",
+    ]);
+
+    res.status(201).json({ message: "Conta criada com sucesso!" });
   } catch (error) {
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: "Erro ao processar a conta informada" });
   }
 }
 

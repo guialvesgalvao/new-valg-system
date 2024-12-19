@@ -10,7 +10,6 @@ describe('Função que transforma um texto em um JSON', () => {
 
     describe('Casos de sucesso', () => {
         beforeEach(() => {
-            // Simula o comportamento do axios.post
             mockedAxios.post.mockResolvedValue({
                 data: {
                     choices: [

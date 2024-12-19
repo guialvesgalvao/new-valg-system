@@ -8,7 +8,7 @@ A estrutura do JSON deve ser:
 {
   "name": string,
   "amount": number,
-  "dueDate": "YYYY-MM-DDT00:00:00.000Z"
+  "due_date": "YYYY-MM-DD"
 }
 
 Se algum dos campos não for encontrado no texto, simplesmente não o inclua no JSON. Lembre-se, o JSON é a única coisa que você deve retornar, sem explicações ou outros textos. Eu irei executar JSON.parse() no seu retorno, então garanta que o formato do JSON esteja correto.`
