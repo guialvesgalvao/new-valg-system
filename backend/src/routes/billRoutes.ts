@@ -7,7 +7,7 @@ billsRouter.get("/", getBills);
 
 billsRouter.post("/", createBill);
 
-billsRouter.put("/:id", updateBill);
+billsRouter.put("/", updateBill);
 
 billsRouter.delete("/:id",deleteBill);
 

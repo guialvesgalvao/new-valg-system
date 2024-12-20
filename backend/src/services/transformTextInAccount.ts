@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { LLMPrompt } from '../config/LLMPrompt';
+import { promptToTransformTextInObject } from '../config/LLMPrompt';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -10,7 +10,7 @@ export async function transformTextInAccount(userSpeech: string): Promise<string
             max_tokens: 200,
             temperature: 0,
             messages: [
-                { role: "system", content: LLMPrompt },
+                { role: "system", content: promptToTransformTextInObject },
                 { role: "user", content: userSpeech }
             ]
         };

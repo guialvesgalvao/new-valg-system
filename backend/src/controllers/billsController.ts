@@ -5,6 +5,7 @@ import { IBillDBSchema } from "../shared/interfaces/IBill";
 import { billFormatter } from "../shared/formatters/billsFormatter";
 import { transformTextInAccount } from "../services/transformTextInAccount";
 import { validateBill } from "../services/validateBill";
+import { transformAccountInfoInSQLQuery } from "../services/transformAccountInfoInSQLQuery";
 
 async function getBills(req: Request, res: Response): Promise<void> {
   const { isOverdue, returnMode } = req.query;
@@ -64,15 +65,29 @@ async function createBill(req: Request, res: Response) {
 }
 
 async function updateBill(req: Request, res: Response) {
-  //identificar o método chamado
+  const { dataType, data } = req.body;
+
+  try {
+    if (!data || !dataType) {
+      res.status(400).json({ error: "os parâmetros 'dataType' e 'data' são obrigatórios" });
+      return;
+    }
+    if(dataType === 'object' && !data.id){
+      res.status(400).json({ error: "o parâmetro 'id' é obrigatório" });
+      return;
+    }
+
+    const bill = dataType === "text" ? await findBillId(data) : data;
+
+    const SQLQuery = transformAccountInfoInSQLQuery(bill);
+
   //se possui os parâmetros de busca necessários ou é um texto
   // se texto, tenta transformar o texto em objeto de busca
   // transformAccountInfoInSQLQuery
   //busca os dados e atualiza
   //se método de entrada foi texto, atribui como paga
   //retorna status code e conta atualizada com sucesso
-  try {
-    console.log("getBill");
+
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error" });
   }
@@ -93,11 +108,3 @@ async function deleteBill(req: Request, res: Response) {
 }
 
 export { getBills, createBill, updateBill, deleteBill };
-
-// const createBillSchema = z.object({
-//   name: z.string().nonempty(),
-//   age: z.number().int().positive(),
-//   lol: z.string(),
-// });
-
-// export type FolderColumnSchemaType = z.infer<typeof createBillSchema>;
