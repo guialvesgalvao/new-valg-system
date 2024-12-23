@@ -5,7 +5,8 @@ import { IBillDBSchema } from "../shared/interfaces/IBill";
 import { billFormatter } from "../shared/formatters/billsFormatter";
 import { transformTextInAccount } from "../services/transformTextInAccount";
 import { validateBill } from "../services/validateBill";
-import { transformAccountInfoInSQLQuery } from "../services/transformAccountInfoInSQLQuery";
+import { getBillMetadataToUpdate } from "../services/getBillMetadataToUpdate";
+import { findBillIdWithOpenAI } from "../services/findBillIdWithOpenAI";
 
 async function getBills(req: Request, res: Response): Promise<void> {
   const { isOverdue, returnMode } = req.query;
@@ -65,46 +66,60 @@ async function createBill(req: Request, res: Response) {
 }
 
 async function updateBill(req: Request, res: Response) {
-  const { dataType, data } = req.body;
+  const { data } = req.body;
 
   try {
-    if (!data || !dataType) {
-      res.status(400).json({ error: "os parâmetros 'dataType' e 'data' são obrigatórios" });
-      return;
-    }
-    if(dataType === 'object' && !data.id){
-      res.status(400).json({ error: "o parâmetro 'id' é obrigatório" });
-      return;
+    const { fieldsToUpdate, metadataValues } = getBillMetadataToUpdate(data)
+
+    if (fieldsToUpdate.length === 0) {
+      res.status(400).json({ error: "Nenhum campo foi informado para atualização." });
+      return
     }
 
-    const bill = dataType === "text" ? await findBillId(data) : data;
+    const SQLUpdateQuery = `UPDATE bills SET ${fieldsToUpdate.join(", ")} WHERE id = ?`;
 
-    const SQLQuery = transformAccountInfoInSQLQuery(bill);
+    await pool.query(SQLUpdateQuery, [data.id, ...metadataValues ]);
 
-  //se possui os parâmetros de busca necessários ou é um texto
-  // se texto, tenta transformar o texto em objeto de busca
-  // transformAccountInfoInSQLQuery
-  //busca os dados e atualiza
-  //se método de entrada foi texto, atribui como paga
-  //retorna status code e conta atualizada com sucesso
-
+    res.status(201).json({ message: "Conta criada com sucesso!" });
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error" });
   }
 }
 
 async function deleteBill(req: Request, res: Response) {
-  //identificar método chamado
-  //se possui os parâmetros de busca necessários ou é um texto
-  // se texto, tenta transformar o texto em objeto de busca
-  // transformAccountInfoInSQLQuery
-  //busca os dados e deleta
-  //retorna status code e conta deletada com sucesso
+  const { id } = req.query;
+
+  if (!id) {
+    res.status(400).json({ error: "É necessário informar um ID da conta que será deletada" })
+  }
+
   try {
-    console.log("getBill");
+    const SQLQuery = `DELETE FROM bills WHERE id = ${id}`;
+
+    await pool.query(SQLQuery);
+
+    res.status(200).json({ message: "Conta deletada com sucesso" });
+
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error" });
   }
 }
 
-export { getBills, createBill, updateBill, deleteBill };
+async function findBillId(req: Request, res: Response) {
+  const { data } = req.body;
+
+  if (!data || data.trim() === '') {
+    res.status(400).json({ error: "É necessário informar o parâmetro data com o texto do usuário" })
+  }
+
+  try {
+    const billId = await findBillIdWithOpenAI(data);
+
+    res.status(200).json({ message: billId });
+
+  } catch (error) {
+    res.status(500).json({ error: "Não foi possível determinar o ID da conta a partir da fala informada." });
+  }
+}
+
+export { getBills, createBill, updateBill, deleteBill, findBillId };

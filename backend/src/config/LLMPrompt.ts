@@ -13,7 +13,7 @@ A estrutura do JSON deve ser:
 
 Se algum dos campos não for encontrado no texto, simplesmente não o inclua no JSON. Lembre-se, o JSON é a única coisa que você deve retornar, sem explicações ou outros textos. Eu irei executar JSON.parse() no seu retorno, então garanta que o formato do JSON esteja correto.`
 
-const promptToFindBillId = `
+export const promptToFindBillId = `
 Você é um assistente especializado em identificar o ID de contas a partir de descrições fornecidas por usuários. Sua tarefa é analisar cuidadosamente uma lista de contas e um texto falado pelo usuário, identificar qual conta está sendo mencionada e retornar apenas o ID correspondente em formato JSON.
 
 Siga as seguintes diretrizes:
