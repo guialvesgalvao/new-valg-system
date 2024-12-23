@@ -2,7 +2,7 @@ import { strings } from '../shared/consts/defaultStringsResponses'
 import { months } from '../shared/consts/months';
 import { IBill } from '../shared/interfaces/IBill';
 
-export function transformAccountToText(bills: Array<IBill>, isOnlyOverdueBills?: boolean): string {
+export function transformBillToText(bills: Array<IBill>, isOnlyOverdueBills?: boolean): string {
     if (bills.length === 0) return strings.withoutBillsOpen
 
     const billStatus = isOnlyOverdueBills ? 'em aberto' : getPluralSuffix('vencida', bills.length)

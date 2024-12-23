@@ -1,4 +1,4 @@
-export function getBillMetadataToUpdate(data) {
+export function getBillMetadataToUpdate(data: any) {
 
     const fieldMap = {
       name: "name",

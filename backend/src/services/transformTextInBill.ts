@@ -4,7 +4,7 @@ import { promptToTransformTextInObject } from '../config/LLMPrompt';
 
 dotenv.config();
 
-export async function transformTextInAccount(userSpeech: string): Promise<string> {
+export async function transformTextInBill(userSpeech: string): Promise<string> {
     try {
         const getBill = await openAIRepository({ systemPrompt: promptToTransformTextInObject, userPrompt: userSpeech, maxTokens: 200})
         return getBill

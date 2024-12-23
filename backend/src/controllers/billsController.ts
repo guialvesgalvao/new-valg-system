@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import pool from "../config/db";
-import { transformAccountToText } from "../services/transformAccountToText";
+import { transformBillToText } from "../services/transformBillToText";
 import { IBillDBSchema } from "../shared/interfaces/IBill";
 import { billFormatter } from "../shared/formatters/billsFormatter";
-import { transformTextInAccount } from "../services/transformTextInAccount";
+import { transformTextInBill } from "../services/transformTextInBill";
 import { validateBill } from "../services/validateBill";
 import { getBillMetadataToUpdate } from "../services/getBillMetadataToUpdate";
 import { findBillIdWithOpenAI } from "../services/findBillIdWithOpenAI";
@@ -22,8 +22,8 @@ async function getBills(req: Request, res: Response): Promise<void> {
       return;
     }
 
-    const transformedAccounts = transformAccountToText(bills);
-    res.status(200).json(transformedAccounts);
+    const transformedBills = transformBillToText(bills);
+    res.status(200).json(transformedBills);
   } catch (error) {
     res.status(500).json({ error: (error as Error).message });
   }
@@ -38,7 +38,7 @@ async function createBill(req: Request, res: Response) {
       return;
     }
 
-    const bill = dataType === "text" ? await transformTextInAccount(data) : data;
+    const bill = dataType === "text" ? await transformTextInBill(data) : data;
 
     if (!validateBill(bill)) {
       res.status(400).json({ error: "A conta informada não possui nome, valor ou data de vencimento" });

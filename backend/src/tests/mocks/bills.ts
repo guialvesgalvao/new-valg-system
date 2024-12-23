@@ -58,17 +58,17 @@ export const unstructuredBills: IUnvalidatedBills[] = [
   },
 ]
 
-export const accountsInSQLQuery = [
-  "SELECT * FROM accounts WHERE amount = 3500 AND due_date = '2024-01-18T00:00:00.000Z';", // objectContas[0]
-  "SELECT * FROM accounts WHERE name = 'Conta de luz' AND due_date = '2024-01-13T00:00:00.000Z';", // objectContas[1]
-  "SELECT * FROM accounts WHERE name = 'Comgás' AND amount = 10.5;", // objectContas[2]
-  "SELECT * FROM accounts WHERE name = 'Cartão de crédito' AND amount = 10000.35 AND due_date = '2025-06-30T00:00:00.000Z';", // objectContas[3]
-  "SELECT * FROM accounts WHERE name = 'Cartão de crédito';", // objectContas[5]
-  "SELECT * FROM accounts WHERE amount = 10000.35;", // objectContas[6]
-  "SELECT * FROM accounts WHERE due_date = '2025-06-30T00:00:00.000Z';" // objectContas[7]
+export const billsInSQLQuery = [
+  "SELECT * FROM bills WHERE amount = 3500 AND due_date = '2024-01-18T00:00:00.000Z';", // objectContas[0]
+  "SELECT * FROM bills WHERE name = 'Conta de luz' AND due_date = '2024-01-13T00:00:00.000Z';", // objectContas[1]
+  "SELECT * FROM bills WHERE name = 'Comgás' AND amount = 10.5;", // objectContas[2]
+  "SELECT * FROM bills WHERE name = 'Cartão de crédito' AND amount = 10000.35 AND due_date = '2025-06-30T00:00:00.000Z';", // objectContas[3]
+  "SELECT * FROM bills WHERE name = 'Cartão de crédito';", // objectContas[5]
+  "SELECT * FROM bills WHERE amount = 10000.35;", // objectContas[6]
+  "SELECT * FROM bills WHERE due_date = '2025-06-30T00:00:00.000Z';" // objectContas[7]
 ]
 
-export const accountsInNaturalLanguage = [
+export const billsInNaturalLanguage = [
   'conta de três mil e quinhentos reais com vencimento em 18 de janeiro de 2024', // objectContas[0]
   'conta de três mil e quinhentos reais com vencimento em 18 de janeiro', // objectContas[0]
   'conta de 3500 com vencimento em 18 de janeiro', // objectContas[0]
