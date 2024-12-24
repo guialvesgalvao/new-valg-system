@@ -1,5 +1,6 @@
 import { validateBill } from '../../../services/validateBill'
 import { unstructuredBills } from '../../mocks/bills'
+import { describe, expect } from '@jest/globals';
 
 describe('Testes para a função que verifica se a conta inserida, é válida', () => {
 

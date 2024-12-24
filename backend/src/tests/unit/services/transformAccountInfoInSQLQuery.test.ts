@@ -1,5 +1,7 @@
 import { unstructuredBills, billsInSQLQuery } from "../../mocks/bills"
 import { transformBillInfoInSQLQuery } from '../../../services/transformBillInfoInSQLQuery'
+import { describe, expect } from '@jest/globals';
+
 
 describe('Função para transformar dados de objetos em SQL Query', () => {
 

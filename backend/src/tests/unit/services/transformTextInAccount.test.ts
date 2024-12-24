@@ -2,6 +2,7 @@ import axios from 'axios';
 import { transformTextInBill } from '../../../services/transformTextInBill';
 import { billsInNaturalLanguage, unstructuredBills } from '../../mocks/bills';
 import { strings } from '../../../shared/consts/defaultStringsResponses';
+import { describe, expect } from '@jest/globals';
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;

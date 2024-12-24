@@ -1,5 +1,6 @@
 import { structuredBills } from "../../mocks/bills"
 import { transformBillToText } from '../../../services/transformBillToText'
+import { describe, expect } from '@jest/globals';
 
 describe('Válida funcionalidade de transformar uma conta em linguagem natural', () => {
 

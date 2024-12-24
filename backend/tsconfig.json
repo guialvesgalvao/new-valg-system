@@ -3,7 +3,7 @@
       "target": "ES2020",
       "module": "commonjs",
       "outDir": "./dist",
-      "rootDir": "./src",
+      "rootDirs": ["./src", "./cypress/e2e"],
       "strict": true,
       "esModuleInterop": true
     },
