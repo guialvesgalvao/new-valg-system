@@ -11,7 +11,7 @@ billsRouter.put("/", updateBill);
 
 billsRouter.delete("/:id",deleteBill);
 
-billsRouter.post("/finder/",findBillId);
+billsRouter.post("/finder/", findBillId);
 
 export { billsRouter }
 
