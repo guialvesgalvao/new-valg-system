@@ -1,13 +1,11 @@
-import prisma from "./config/db";
+import { billService } from "./modules/bill/factories/BillFactory";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 async function getAccount() {
-  const rows = await prisma.bill.findMany({
-    where: {
-      status: "Pending",
-    },
-  });
-
-  console.log(rows);
+  const bills = await billService.getAllBills();
+  console.log(bills);
 }
 
 getAccount();
