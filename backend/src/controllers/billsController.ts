@@ -7,13 +7,22 @@ import { transformTextInBill } from "../services/transformTextInBill";
 import { validateBill } from "../services/validateBill";
 import { getBillMetadataToUpdate } from "../services/getBillMetadataToUpdate";
 import { findBillIdWithOpenAI } from "../services/findBillIdWithOpenAI";
+import { validateQueryParams } from "../shared/utils/validateQueryParams";
 
 async function getBills(req: Request, res: Response): Promise<void> {
   const { isOverdue, returnMode } = req.query;
 
-  const SQLQuery = isOverdue === "true" ? "SELECT * FROM bills WHERE due_date < CURRENT_DATE" : "SELECT * FROM bills";
-
   try {
+    validateQueryParams(
+      { isOverdue: isOverdue as string, returnMode: returnMode as string },
+      {
+        isOverdue: (value) => value === "true" || value === undefined,
+        returnMode: (value) => value === "text" || value === undefined,
+      }
+    );
+
+    const SQLQuery = isOverdue === "true" ? "SELECT * FROM bills WHERE due_date < CURRENT_DATE" : "SELECT * FROM bills";
+
     const [rows] = await pool.query(SQLQuery);
     const bills = billFormatter(rows as IBillDBSchema[]);
 
@@ -69,16 +78,16 @@ async function updateBill(req: Request, res: Response) {
   const { data } = req.body;
 
   try {
-    const { fieldsToUpdate, metadataValues } = getBillMetadataToUpdate(data)
+    const { fieldsToUpdate, metadataValues } = getBillMetadataToUpdate(data);
 
     if (fieldsToUpdate.length === 0) {
       res.status(400).json({ error: "Nenhum campo foi informado para atualização." });
-      return
+      return;
     }
 
     const SQLUpdateQuery = `UPDATE bills SET ${fieldsToUpdate.join(", ")} WHERE id = ?`;
 
-    await pool.query(SQLUpdateQuery, [data.id, ...metadataValues ]);
+    await pool.query(SQLUpdateQuery, [data.id, ...metadataValues]);
 
     res.status(201).json({ message: "Conta criada com sucesso!" });
   } catch (error) {
@@ -90,7 +99,7 @@ async function deleteBill(req: Request, res: Response) {
   const { id } = req.query;
 
   if (!id) {
-    res.status(400).json({ error: "É necessário informar um ID da conta que será deletada" })
+    res.status(400).json({ error: "É necessário informar um ID da conta que será deletada" });
   }
 
   try {
@@ -99,7 +108,6 @@ async function deleteBill(req: Request, res: Response) {
     await pool.query(SQLQuery);
 
     res.status(200).json({ message: "Conta deletada com sucesso" });
-
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error" });
   }
@@ -108,15 +116,14 @@ async function deleteBill(req: Request, res: Response) {
 async function findBillId(req: Request, res: Response) {
   const { data } = req.body;
 
-  if (!data || data.trim() === '') {
-    res.status(400).json({ error: "É necessário informar o parâmetro data com o texto do usuário" })
+  if (!data || data.trim() === "") {
+    res.status(400).json({ error: "É necessário informar o parâmetro data com o texto do usuário" });
   }
 
   try {
     const billId = await findBillIdWithOpenAI(data);
 
     res.status(200).json({ message: billId });
-
   } catch (error) {
     res.status(500).json({ error: "Não foi possível determinar o ID da conta a partir da fala informada." });
   }
