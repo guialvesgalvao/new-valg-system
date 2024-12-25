@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import { BillRecurrenceService } from "../services/BillRecurrenceService";
-import { BillRecurrenceRepository } from "../repositories/BillRecurrenceRepository";
+import { BillRecurrenceService } from "../services/bill-recurrence-service";
+import { BillRecurrenceRepository } from "../repositories/bill-recurrence-repository";
 
 describe("BillRecurrenceService", () => {
   let billRecurrenceService: BillRecurrenceService;
@@ -21,11 +21,10 @@ describe("BillRecurrenceService", () => {
     });
   });
 
-  describe("getEnabledBillRecurrences", () => {
+  describe("getAllEnabledBillRecurrences", () => {
     it("should return all enabled bill recurrences", async () => {
       const billRecurrences =
-        await billRecurrenceService.getEnabledBillRecurrences();
-
+        await billRecurrenceService.getAllEnabledBillRecurrences();
       expect(billRecurrences).toBeInstanceOf(Array);
     });
   });

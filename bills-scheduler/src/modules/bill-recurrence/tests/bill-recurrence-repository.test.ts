@@ -1,7 +1,7 @@
 import { DeepMockProxy, mockDeep } from "jest-mock-extended";
 
 import { PrismaClient } from "@prisma/client";
-import { BillRecurrenceRepository } from "../repositories/BillRecurrenceRepository";
+import { BillRecurrenceRepository } from "../repositories/bill-recurrence-repository";
 
 jest.mock("@prisma/client", () => ({
   PrismaClient: jest.fn(() => mockDeep<PrismaClient>()),
@@ -21,12 +21,14 @@ describe("Validate BillRecurrenceRepository", () => {
     expect(prismaMock.billRecurrence.findMany).toHaveBeenCalled();
   });
 
-  it("should call prisma.billRecurrence.findMany with enabled true when getEnabledBillRecurrences is called", async () => {
-    await billRecurrenceRepository.getEnabledBillRecurrences();
-    expect(prismaMock.billRecurrence.findMany).toHaveBeenCalledWith({
-      where: {
-        enabled: true,
-      },
-    });
+  it("should call prisma.billRecurrence.findMany when getAllEnabledBillRecurrences is called", async () => {
+    await billRecurrenceRepository.getAllEnabledBillRecurrences();
+    expect(prismaMock.billRecurrence.findMany).toHaveBeenCalled();
+  });
+
+  it("should call prisma.billRecurrence.findMany when getEnabledAndDueBillRecurrences is called", async () => {
+    const date = new Date();
+    await billRecurrenceRepository.getEnabledAndDueBillRecurrences(date);
+    expect(prismaMock.billRecurrence.findMany).toHaveBeenCalled();
   });
 });

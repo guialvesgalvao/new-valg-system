@@ -1,6 +1,6 @@
 import { mockDeep, DeepMockProxy } from "jest-mock-extended";
 
-import { BillRepository } from "../repositories/BillRepository";
+import { BillRepository } from "../repositories/bill-repository";
 import { PrismaClient } from "@prisma/client";
 
 jest.mock("@prisma/client", () => ({

@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { CreateBillType } from "../validations/bill-validations";
 
 export class BillRepository {
   private readonly _prisma: PrismaClient;
@@ -23,6 +24,15 @@ export class BillRepository {
     return this._prisma.bill.findMany({
       where: {
         status: "Overdue",
+      },
+    });
+  }
+
+  async createBill(data: CreateBillType) {
+    return this._prisma.bill.create({
+      data: {
+        ...data,
+        status: "Pending",
       },
     });
   }

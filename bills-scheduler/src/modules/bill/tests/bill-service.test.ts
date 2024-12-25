@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import { BillRepository } from "../repositories/BillRepository";
-import { BillService } from "../services/BillService";
+import { BillRepository } from "../repositories/bill-repository";
+import { BillService } from "../services/bill-service";
 
 describe("BillService", () => {
   let billService: BillService;
@@ -27,5 +27,18 @@ describe("BillService", () => {
   it("should return an array of overdue bills", async () => {
     const overdueBills = await billService.getOverdueBills();
     expect(overdueBills).toBeInstanceOf(Array);
+  });
+
+  it("should create a bill", async () => {
+    const bill = await billService.createBill({
+      name: "Electricity",
+      amount: 100,
+      dueDate: new Date(),
+      isGeneratedByRecurrence: true,
+      status: "Pending",
+      user: "trigger",
+    });
+
+    expect(bill).toHaveProperty("id");
   });
 });

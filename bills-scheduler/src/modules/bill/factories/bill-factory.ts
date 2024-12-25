@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import { BillRepository } from "../repositories/BillRepository";
-import { BillService } from "../services/BillService";
+import { BillRepository } from "../repositories/bill-repository";
+import { BillService } from "../services/bill-service";
 
 const prisma = new PrismaClient();
 

@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import { BillRecurrenceRepository } from "../repositories/BillRecurrenceRepository";
-import { BillRecurrenceService } from "../services/BillRecurrenceService";
+import { BillRecurrenceRepository } from "../repositories/bill-recurrence-repository";
+import { BillRecurrenceService } from "../services/bill-recurrence-service";
 
 const prisma = new PrismaClient();
 
