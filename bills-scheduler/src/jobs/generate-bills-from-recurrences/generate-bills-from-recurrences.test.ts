@@ -4,9 +4,9 @@ import { generateBillsFromRecurrences } from "../generate-bills-from-recurrences
 import { billRecurrenceService } from "../../modules/bill-recurrence/factories/bill-recurrence-factory";
 import { billService } from "../../modules/bill/factories/bill-factory";
 
-jest.mock("../modules/bill-recurrence/factories/bill-recurrence-factory");
-jest.mock("../modules/bill/factories/bill-factory");
-jest.mock("../utils/logger/logger");
+jest.mock("../../modules/bill-recurrence/factories/bill-recurrence-factory");
+jest.mock("../../modules/bill/factories/bill-factory");
+jest.mock("../../utils/logger/logger");
 
 const mockRecurrences = [
   {
@@ -73,7 +73,7 @@ describe("generateBillsFromRecurrences", () => {
     await generateBillsFromRecurrences();
 
     expect(logger.error).toHaveBeenCalledWith(
-      "Error while generating bills from recurrences",
+      "Error to generate bills from recurrences",
       expect.any(Error)
     );
 
