@@ -1,0 +1,7 @@
+[2024-12-25 16:41:29] [INFO]: Starting application in development environment...
+[2024-12-25 16:42:00] [INFO]: Running job to generate bills from recurrences
+[2024-12-25 16:42:01] [INFO]: Found 3 recurrences to process.
+[2024-12-25 16:42:03] [INFO]: Bill generated from recurrence 1 with id 60
+[2024-12-25 16:42:03] [INFO]: Bill generated from recurrence 3 with id 61
+[2024-12-25 16:42:03] [INFO]: Bill generated from recurrence 4 with id 62
+[2024-12-25 16:42:29] [INFO]: Starting application in development environment...

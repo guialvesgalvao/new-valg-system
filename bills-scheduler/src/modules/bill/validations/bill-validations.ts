@@ -9,7 +9,7 @@ export const Bill = z.object({
   isGeneratedByRecurrence: z.boolean(),
   user: z.string(),
   modifiedAt: z.date(),
-  createdAt: z.date(),
+  createdAt: z.date()
 });
 
 export const CreateBill = z.object({
@@ -18,7 +18,7 @@ export const CreateBill = z.object({
   dueDate: z.date(),
   status: z.enum(["Pending", "Overdue"]),
   isGeneratedByRecurrence: z.boolean(),
-  user: z.string(),
+  user: z.string()
 });
 
 export type BillType = z.infer<typeof Bill>;

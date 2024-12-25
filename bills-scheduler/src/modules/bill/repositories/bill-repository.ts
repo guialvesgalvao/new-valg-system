@@ -15,25 +15,30 @@ export class BillRepository {
   async getPendingBills() {
     return this._prisma.bill.findMany({
       where: {
-        status: "Pending",
-      },
+        status: "Pending"
+      }
     });
   }
 
   async getOverdueBills() {
     return this._prisma.bill.findMany({
       where: {
-        status: "Overdue",
-      },
+        status: "Overdue"
+      }
     });
   }
 
   async createBill(data: CreateBillType) {
-    return this._prisma.bill.create({
+    const response = await this._prisma.bill.create({
       data: {
         ...data,
-        status: "Pending",
+        status: "Pending"
       },
+      select: {
+        id: true
+      }
     });
+
+    return response.id;
   }
 }

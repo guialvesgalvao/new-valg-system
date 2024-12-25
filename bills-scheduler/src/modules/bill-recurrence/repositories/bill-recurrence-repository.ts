@@ -14,8 +14,8 @@ export class BillRecurrenceRepository {
   async getAllEnabledBillRecurrences() {
     return this._prisma.billRecurrence.findMany({
       where: {
-        enabled: true,
-      },
+        enabled: true
+      }
     });
   }
 
@@ -23,8 +23,8 @@ export class BillRecurrenceRepository {
     return this._prisma.billRecurrence.findMany({
       where: {
         enabled: true,
-        OR: [{ endDate: null }, { endDate: { gte: date } }],
-      },
+        OR: [{ endDate: null }, { endDate: { gte: date } }]
+      }
     });
   }
 }

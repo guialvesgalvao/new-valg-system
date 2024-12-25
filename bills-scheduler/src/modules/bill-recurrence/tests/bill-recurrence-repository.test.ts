@@ -4,7 +4,7 @@ import { PrismaClient } from "@prisma/client";
 import { BillRecurrenceRepository } from "../repositories/bill-recurrence-repository";
 
 jest.mock("@prisma/client", () => ({
-  PrismaClient: jest.fn(() => mockDeep<PrismaClient>()),
+  PrismaClient: jest.fn(() => mockDeep<PrismaClient>())
 }));
 
 let billRecurrenceRepository: BillRecurrenceRepository;

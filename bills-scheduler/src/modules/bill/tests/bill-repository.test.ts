@@ -4,7 +4,7 @@ import { BillRepository } from "../repositories/bill-repository";
 import { PrismaClient } from "@prisma/client";
 
 jest.mock("@prisma/client", () => ({
-  PrismaClient: jest.fn(() => mockDeep<PrismaClient>()),
+  PrismaClient: jest.fn(() => mockDeep<PrismaClient>())
 }));
 
 let billRepository: BillRepository;
@@ -25,8 +25,8 @@ describe("Validate BillRepository", () => {
     await billRepository.getPendingBills();
     expect(prismaMock.bill.findMany).toHaveBeenCalledWith({
       where: {
-        status: "Pending",
-      },
+        status: "Pending"
+      }
     });
   });
 
@@ -34,8 +34,8 @@ describe("Validate BillRepository", () => {
     await billRepository.getOverdueBills();
     expect(prismaMock.bill.findMany).toHaveBeenCalledWith({
       where: {
-        status: "Overdue",
-      },
+        status: "Overdue"
+      }
     });
   });
 });

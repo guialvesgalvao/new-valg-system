@@ -17,8 +17,8 @@ export class BillService {
     return this.billRepository.getOverdueBills();
   }
 
-  async createBill(data: CreateBillType): Promise<Bill> {
-    const bill = CreateBill.parse(data);
-    return this.billRepository.createBill(bill);
+  async createBill(data: CreateBillType): Promise<number> {
+    const safeBill = CreateBill.parse(data);
+    return this.billRepository.createBill(safeBill);
   }
 }

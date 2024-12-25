@@ -36,9 +36,9 @@ describe("BillService", () => {
       dueDate: new Date(),
       isGeneratedByRecurrence: true,
       status: "Pending",
-      user: "trigger",
+      user: "trigger"
     });
 
-    expect(bill).toHaveProperty("id");
+    expect(bill).toBeGreaterThan(0);
   });
 });
