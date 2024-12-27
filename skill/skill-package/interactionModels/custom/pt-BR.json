@@ -1,0 +1,73 @@
+{
+  "interactionModel": {
+    "languageModel": {
+      "intents": [
+        {
+          "name": "AMAZON.CancelIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.HelpIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.StopIntent",
+          "samples": []
+        },
+        {
+          "slots": [],
+          "name": "HelloWorldIntent",
+          "samples": [
+            "hello",
+            "how are you",
+            "say hi world",
+            "say hi",
+            "hi",
+            "say hello world",
+            "say hello"
+          ]
+        },
+        {
+          "name": "bills",
+          "slots": [],
+          "samples": [
+              "contas",
+              "vencimento das contas",
+              "analisar contas",
+              "ver contas"
+          ]
+      },
+      {
+          "name": "createBill",
+          "slots": [
+              {
+                  "name": "bill",
+                  "type": "AMAZON.SearchQuery"
+              }
+          ],
+          "samples": [
+              "criar conta",
+              "criar conta {bill}"
+          ]
+      },
+      {
+          "name": "updateBill",
+          "slots": [
+              {
+                  "name": "bill",
+                  "type": "AMAZON.SearchQuery"
+              }
+          ],
+          "samples": [
+              "sim",
+              "não",
+              "confirmar",
+              "pagar conta {bill}"
+          ]
+      }
+      ],
+      "types": [],
+      "invocationName": "central de contas"
+    }
+  }
+}
