@@ -1,9 +1,11 @@
+mod bootstrap;
 mod config;
 mod models;
 mod repositories;
 mod scheduler;
 mod services;
 
+use bootstrap::validate_config;
 use config::database::get_database_pool;
 use config::environment::Config;
 
@@ -19,11 +21,14 @@ use services::recurrence_service::RecurrencesService;
 use tokio::runtime::Runtime;
 
 fn main() {
-    // Load the configuration from the environment
     let rt = Runtime::new().unwrap();
     let config: Config = Config::from_env();
 
-    // Define the scheduler configuration
+    if let Err(e) = validate_config(&config) {
+        eprintln!("Configuration validation failed: {}", e);
+        return;
+    }
+
     let scheduler_config = SchedulerConfig {
         cron_expression: if config.environment == "production" {
             "0 0 1 * * *".to_string()
@@ -32,7 +37,6 @@ fn main() {
         },
     };
 
-    // Inicializa o logger e mantém o guard ativo
     let _guard = logger::init_logger();
 
     rt.block_on(async {
@@ -40,7 +44,10 @@ fn main() {
             "Starting the application, environment: {}",
             config.environment
         );
-        tracing::info!("Starting the application, environment: {}", config.environment);
+        tracing::info!(
+            "Starting the application, environment: {}",
+            config.environment
+        );
 
         let db_pool = get_database_pool(&config).await;
 
