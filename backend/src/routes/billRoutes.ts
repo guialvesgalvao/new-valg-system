@@ -9,7 +9,7 @@ billsRouter.post("/", createBill);
 
 billsRouter.put("/", updateBill);
 
-billsRouter.delete("/:id",deleteBill);
+billsRouter.delete("/:id", deleteBill);
 
 billsRouter.post("/finder/", findBillId);
 

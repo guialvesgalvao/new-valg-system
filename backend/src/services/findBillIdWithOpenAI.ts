@@ -8,7 +8,7 @@ export async function findBillIdWithOpenAI(userText: string) {
   const billsInNaturalLanguage = transformBillsToFindId(openBills);
 
   const createUserPrompt = joinBillOptionsWithPrompt(userText, billsInNaturalLanguage);
-  const getOpenAIResonse = openAIRepository({ systemPrompt: promptToFindBillId, userPrompt: createUserPrompt, maxTokens: 1000})
+  const getOpenAIResonse = await openAIRepository({ systemPrompt: promptToFindBillId, userPrompt: createUserPrompt, maxTokens: 1000})
 
   return getOpenAIResonse
 }

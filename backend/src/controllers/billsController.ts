@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import pool from "../config/db";
 import { transformBillToText } from "../services/transformBillToText";
-import { IBillDBSchema } from "../shared/interfaces/IBill";
+import { IBill, IBillDBSchema } from "../shared/interfaces/IBill";
 import { billFormatter } from "../shared/formatters/billsFormatter";
 import { transformTextInBill } from "../services/transformTextInBill";
 import { validateBill } from "../services/validateBill";
@@ -49,8 +49,10 @@ async function createBill(req: Request, res: Response) {
 
     const bill = dataType === "text" ? await transformTextInBill(data) : data;
 
-    if (!validateBill(bill)) {
-      res.status(400).json({ error: "A conta informada não possui nome, valor ou data de vencimento" });
+    const billValidator = validateBill(bill);
+
+    if (typeof billValidator == "string") {
+      res.status(400).json({ error: billValidator });
       return;
     }
 
@@ -63,7 +65,7 @@ async function createBill(req: Request, res: Response) {
       bill.name,
       bill.amount,
       bill.due_date,
-      bill.status || "teste",
+      bill.status || "",
       bill.isRecurring ? 1 : 0,
       "default_user",
     ]);
@@ -76,8 +78,19 @@ async function createBill(req: Request, res: Response) {
 
 async function updateBill(req: Request, res: Response) {
   const { data } = req.body;
-
   try {
+    if (!data.id) {
+      res.status(400).json({ error: "É obrigatório utilizar informar o ID da conta." });
+      return;
+    }
+
+    const [existingBill] = await pool.query("SELECT * FROM bills WHERE id = ?", [data.id]);
+
+    if ((existingBill as IBill[]).length === 0) {
+      res.status(404).json({ error: "Conta não encontrada." });
+      return;
+    }
+
     const { fieldsToUpdate, metadataValues } = getBillMetadataToUpdate(data);
 
     if (fieldsToUpdate.length === 0) {
@@ -87,22 +100,30 @@ async function updateBill(req: Request, res: Response) {
 
     const SQLUpdateQuery = `UPDATE bills SET ${fieldsToUpdate.join(", ")} WHERE id = ?`;
 
-    await pool.query(SQLUpdateQuery, [data.id, ...metadataValues]);
+    await pool.query(SQLUpdateQuery, [...metadataValues, data.id]);
 
-    res.status(201).json({ message: "Conta criada com sucesso!" });
+    res.status(201).json({ message: "Conta atualizada com sucesso!" });
   } catch (error) {
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: "Erro durante o processo de atualização da conta" });
   }
 }
 
 async function deleteBill(req: Request, res: Response) {
-  const { id } = req.query;
+  const { id } = req.params;
 
   if (!id) {
     res.status(400).json({ error: "É necessário informar um ID da conta que será deletada" });
+    return;
   }
 
   try {
+    const [existingBill] = await pool.query("SELECT * FROM bills WHERE id = ?", [id]);
+
+    if ((existingBill as IBill[]).length === 0) {
+      res.status(404).json({ error: "Conta não encontrada." });
+      return;
+    }
+
     const SQLQuery = `DELETE FROM bills WHERE id = ${id}`;
 
     await pool.query(SQLQuery);
@@ -118,6 +139,7 @@ async function findBillId(req: Request, res: Response) {
 
   if (!data || data.trim() === "") {
     res.status(400).json({ error: "É necessário informar o parâmetro data com o texto do usuário" });
+    return;
   }
 
   try {

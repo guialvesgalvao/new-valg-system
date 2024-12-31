@@ -1,5 +1,5 @@
 import { IBill } from "../../../src/shared/interfaces/IBill";
-import Cypress from 'cypress'
+import Cypress from 'cypress';
 
 describe("Testa o funcionamento da API padrão para busca de contas", () => {
   it("Deve retornar uma lista de contas em formato de array", async () => {
