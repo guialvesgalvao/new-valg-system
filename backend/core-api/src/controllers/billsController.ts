@@ -5,7 +5,7 @@ import { IBill, IBillDBSchema } from "../shared/interfaces/IBill";
 import { billFormatter } from "../shared/formatters/billsFormatter";
 import { transformTextInBill } from "../services/transformTextInBill";
 import { validateBill } from "../services/validateBill";
-import { getBillMetadataToUpdate } from "../services/getBillMetadataToUpdate";
+import { getBillMetadataToUpdate } from "../services/getObjectMetadata";
 import { findBillIdWithOpenAI } from "../services/findBillIdWithOpenAI";
 import { validateQueryParams } from "../shared/utils/validateQueryParams";
 
