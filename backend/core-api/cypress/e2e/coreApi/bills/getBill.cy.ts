@@ -1,4 +1,4 @@
-import { IBill } from "../../../src/shared/interfaces/IBill";
+import { IBill } from "../../../../src/shared/interfaces/IBill";
 import Cypress from 'cypress';
 
 describe("Testa o funcionamento da API padrão para busca de contas", () => {
