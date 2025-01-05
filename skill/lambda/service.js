@@ -114,8 +114,121 @@ const postRemoteData = async (slotValue) => {
   }
 };
 
+const putRemoteData = async (slotValue) => {
+  const client = getClient();  // Escolher entre https ou http
+  
+  const data = JSON.stringify({
+    data: slotValue,  // espera objeto de update
+  });
+
+  const options = {
+    hostname: 'new-valg-system-production.up.railway.app',
+    path: '/bills',  // URL do endpoint
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',  // Definir o tipo de conteúdo como JSON
+      'Content-Length': Buffer.byteLength(data),  // Definir o comprimento do corpo
+    },
+  };
+
+  // Retorna uma Promise, mas com async/await para simplificar a leitura
+  try {
+    const response = await new Promise((resolve, reject) => {
+      const request = client.request(options, (response) => {
+        let responseBody = '';
+
+        // Acompanhar os dados da resposta
+        response.on('data', (chunk) => {
+          responseBody += chunk;
+        });
+
+        // Ao finalizar a resposta, resolver a Promise
+        response.on('end', () => {
+          // Verificar o código de status e tratar erros
+          if (response.statusCode < 200 || response.statusCode > 299) {
+            reject(new Error(`Request failed with status code ${response.statusCode}`));
+          }
+          resolve(responseBody);
+        });
+      });
+
+      // Tratar erro de rede ou outros erros relacionados à requisição
+      request.on('error', (err) => reject(err));
+
+      // Escrever o corpo da requisição
+      request.write(data);
+
+      // Finalizar a requisição
+      request.end();
+    });
+
+    return response;
+  } catch (error) {
+    // Tratar erros gerais
+    throw new Error(`Failed to post data: ${error.message}`);
+  }
+};
+
+const findRemoteData = async (slotValue) => {
+  const client = getClient();  // Escolher entre https ou http
+  const data = JSON.stringify({
+    data: slotValue,  // Concatenar a string com o slotValue
+  });
+
+  const options = {
+    hostname: 'new-valg-system-production.up.railway.app',
+    path: '/bills/finder',  // URL do endpoint
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',  // Definir o tipo de conteúdo como JSON
+      'Content-Length': Buffer.byteLength(data),  // Definir o comprimento do corpo
+    },
+  };
+
+  // Retorna uma Promise, mas com async/await para simplificar a leitura
+  try {
+    const response = await new Promise((resolve, reject) => {
+      const request = client.request(options, (response) => {
+        let responseBody = '';
+
+        // Acompanhar os dados da resposta
+        response.on('data', (chunk) => {
+          responseBody += chunk;
+        });
+
+        // Ao finalizar a resposta, resolver a Promise
+        response.on('end', () => {
+          // Verificar o código de status e tratar erros
+          if (response.statusCode < 200 || response.statusCode > 299) {
+            reject(new Error(`Request failed with status code ${response.statusCode}`));
+          }
+          resolve(responseBody);
+        });
+      });
+
+      // Tratar erro de rede ou outros erros relacionados à requisição
+      request.on('error', (err) => reject(err));
+
+      // Escrever o corpo da requisição
+      request.write(data);
+
+      // Finalizar a requisição
+      request.end();
+    });
+
+    return response;
+  } catch (error) {
+    // Tratar erros gerais
+    throw new Error(`Failed to post data: ${error.message}`);
+  }
+};
+
+
+
 // Exportação das funções para que possam ser usadas em outros módulos
 module.exports = {
   getRemoteData,
   postRemoteData,
+  findRemoteData,
+  putRemoteData,
 };

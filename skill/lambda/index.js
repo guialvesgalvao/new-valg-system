@@ -71,10 +71,73 @@ const updateBill = {
     async handle(handlerInput) {  
       const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
    
-      const slotValue = handlerInput.requestEnvelope.request.intent.slots.bill.value;
-      
-      console.log(handlerInput.requestEnvelope.request.intent.slots)
-      let outputSpeech = 'isso é um teste de update de conta: ' + sessionAttributes.favoriteColor+ ' ' + slotValue + ' ';
+        const slotValue = handlerInput.requestEnvelope.request.intent.slots.bill.value;
+        let outputSpeech = '';
+       
+        if(!sessionAttributes.billToPay) {
+            
+            await service.findRemoteData(slotValue).then((response) => {  
+                const data = JSON.parse(response);  
+                outputSpeech = "Tem certeza que deseja atualizar essa conta?";  
+                
+                const billToPay = data.message.id
+                
+                sessionAttributes.billToPay = billToPay;
+                
+            }).catch((err) => {  
+                console.log(`ERROR: ${err.message}`);  
+                outputSpeech = `Desculpe, não foi possível atualizar a conta. ${err.message} `;
+            }); 
+        } else {
+            outputSpeech = `${sessionAttributes.billToPay}`
+        }
+        
+     
+
+      return handlerInput.responseBuilder
+        .speak(outputSpeech)
+        .reprompt(commonMessage)
+        .getResponse();
+    
+    },  
+};
+
+const confirmUpdateBill = {
+    canHandle(handlerInput) {  
+      // Retorna o resultado da verificação
+      return handlerInput.requestEnvelope.request.type === 'IntentRequest'  
+          && handlerInput.requestEnvelope.request.intent.name === 'confirmUpdateBill';  
+    },  
+    async handle(handlerInput) {  
+        
+        
+        const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
+   
+       
+        let outputSpeech = '';
+       
+       
+         if(sessionAttributes.billToPay) {
+            
+            const billToPay = {
+                id: sessionAttributes.billToPay,
+                status: "Pago"
+            }
+            
+            await service.putRemoteData(billToPay).then((response) => {  
+                const data = JSON.parse(response);  
+                outputSpeech = data.message + ' ';  
+                
+                
+            }).catch((err) => {  
+                console.log(`ERROR: ${err.message}`);  
+                outputSpeech = `Desculpe, não foi possível atualizar a conta. ${err.message} `;
+            }); 
+        } else {
+            outputSpeech = `Não foi encontrada conta para atualização. `
+        }
+        
+     
 
       return handlerInput.responseBuilder
         .speak(outputSpeech + commonMessage)
@@ -236,6 +299,7 @@ exports.handler = Alexa.SkillBuilders.custom()
         checkBills,
         updateBill,
         createBill,
+        confirmUpdateBill,
         HelloWorldIntentHandler,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
