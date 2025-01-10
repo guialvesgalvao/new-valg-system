@@ -9,6 +9,7 @@ export function billsFactory(bills: Array<IBillDBSchema>): Array<IBill> {
             dueDate: new Date(bill.due_date),
             status: bill.status,
             isRecurring: !!bill.is_generated_by_recurrence,
+            userId: bill.user_id,
             modifiedAt: bill.modified_at,
             createdAt: bill.created_at
         }

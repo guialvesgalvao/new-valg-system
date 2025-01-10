@@ -7,6 +7,12 @@ export class BillRepository {
 
   constructor(userId: number) {
     this.userId = userId;
+
+    this.get = this.get.bind(this);
+    this.checkBillExist = this.checkBillExist.bind(this);
+    this.create = this.create.bind(this);
+    this.updateMetadata = this.updateMetadata.bind(this);
+    this.delete = this.delete.bind(this);
   }
 
   async get(onlyOverdue: boolean): Promise<IBillDBSchema[]> {

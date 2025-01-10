@@ -1,12 +1,9 @@
-import { Request, Response } from "express";
-import pool from "../config/db";
+import { Response } from "express";
 import { transformBillToText } from "../services/transformBillToText";
 import { IBill } from "../shared/interfaces/IBill";
 import { transformTextInBill } from "../services/transformTextInBill";
 import { validateBill } from "../services/validateBill";
-import { getObjectMetadata } from "../services/getObjectMetadata";
 import { findBillIdWithOpenAI } from "../services/findBillIdWithOpenAI";
-import { ResultSetHeader } from "mysql2";
 import { BillService } from "../services/BillService";
 import { ICustomRequest } from "../interfaces/ICustomRequest";
 import { BillRepository } from "../repositories/billRepository";

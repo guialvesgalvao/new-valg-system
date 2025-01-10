@@ -11,6 +11,9 @@ export class BillService {
     this._repository = new BillRepository(userId);
 
     this.userId = userId;
+
+    this.get = this.get.bind(this);
+    this.updateBillMetadata = this.updateBillMetadata.bind(this);
   }
 
   async get(onlyOverdue: boolean): Promise<IBill[]> {

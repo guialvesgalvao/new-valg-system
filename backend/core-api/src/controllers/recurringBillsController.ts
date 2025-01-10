@@ -1,14 +1,9 @@
 import { Request, Response } from "express";
 import pool from "../config/db";
-import { transformBillToText } from "../services/transformBillToText";
-import { IBill, IBillDBSchema, IUnvalidatedBills } from "../shared/interfaces/IBill";
-import { billFormatter } from "../shared/formatters/billsFormatter";
-import { transformTextInBill } from "../services/transformTextInBill";
-import { validateBill } from "../services/validateBill";
+import { IBill, IUnvalidatedBills } from "../shared/interfaces/IBill";
+
 import { getObjectMetadata } from "../services/getObjectMetadata";
-import { findBillIdWithOpenAI } from "../services/findBillIdWithOpenAI";
-import { validateQueryParams } from "../shared/utils/validateQueryParams";
-import { recurringBillsValidator } from "../validations/recurringBillsValidator";
+import { recurringBillsValidator } from "../shared/validations/recurringBillsValidator";
 import { recurringBillsFormatter } from "../shared/formatters/recurringBillsFormatter";
 import { IRecurringBillDBSchema } from "../shared/interfaces/IRecurringBill";
 

@@ -17,7 +17,7 @@ export interface IBillDBSchema {
   due_date: string;
   status:  string;
   is_generated_by_recurrence: number; 
-  user?:  string;
+  user_id:  number;
   modified_at: string;
   created_at: string;
 }
