@@ -1,4 +1,4 @@
 export enum TokenType {
-  LongLife = "longlife",
-  default = "default",
+  LongLife = 'longlife',
+  Default = 'default'
 }
