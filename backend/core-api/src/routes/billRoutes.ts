@@ -1,17 +1,18 @@
 import { Router } from "express";
 import { getBills, createBill, updateBill, deleteBill, findBillId } from "../controllers/billsController";
+import { authenticateToken } from "../middlewares/authenticateToken";
 
 const billsRouter = Router();
 
-billsRouter.get("/", getBills);
+billsRouter.get("/", authenticateToken, getBills);
 
-billsRouter.post("/", createBill);
+billsRouter.post("/",authenticateToken, createBill);
 
-billsRouter.patch("/", updateBill);
+billsRouter.patch("/",authenticateToken, updateBill);
 
-billsRouter.delete("/:id", deleteBill);
+billsRouter.delete("/:id",authenticateToken, deleteBill);
 
-billsRouter.post("/finder/", findBillId);
+billsRouter.post("/finder/",authenticateToken, findBillId);
 
 export { billsRouter }
 

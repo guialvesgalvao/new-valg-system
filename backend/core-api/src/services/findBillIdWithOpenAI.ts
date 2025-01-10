@@ -3,8 +3,8 @@ import { promptToFindBillId } from "../config/LLMPrompt";
 import { openAIRepository } from "../repositories/openAIRepository";
 import { IBillDBSchema } from "../shared/interfaces/IBill";
 
-export async function findBillIdWithOpenAI(userText: string) {
-  const openBills = await getOpenBills();
+export async function findBillIdWithOpenAI(userText: string, userId: number) {
+  const openBills = await getOpenBills(userId);
   const billsInNaturalLanguage = transformBillsToFindId(openBills);
 
   const createUserPrompt = joinBillOptionsWithPrompt(userText, billsInNaturalLanguage);
@@ -13,10 +13,10 @@ export async function findBillIdWithOpenAI(userText: string) {
   return getOpenAIResonse
 }
 
-export async function getOpenBills() {
+export async function getOpenBills(userId: number) {
   try {
-    const SQLQuery = "SELECT * FROM bills WHERE due_date < CURRENT_DATE";
-    const [rows] = await pool.query(SQLQuery);
+    const SQLQuery = "SELECT * FROM bills WHERE due_date < CURRENT_DATE AND user_id = ?";
+    const [rows] = await pool.query(SQLQuery, [userId]);
 
     return rows as IBillDBSchema[];
   } catch (error) {

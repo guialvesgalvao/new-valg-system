@@ -1,5 +1,6 @@
 import axios from 'axios'
 import dotenv from 'dotenv';
+import { IBill } from '../shared/interfaces/IBill';
 
 dotenv.config();
 
@@ -9,7 +10,7 @@ interface IOpenAIRepositoryProps {
     userPrompt: string;
 }
 
-export async function openAIRepository({ maxTokens, systemPrompt, userPrompt }: IOpenAIRepositoryProps): Promise<string> {
+export async function openAIRepository({ maxTokens, systemPrompt, userPrompt }: IOpenAIRepositoryProps): Promise<IBill> {
     try {
         const requestBody = {
             max_tokens: maxTokens ?? 200,

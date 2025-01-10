@@ -3,6 +3,7 @@ export interface IBill {
   name: string;
   amount: number;
   dueDate: Date;
+  userId: number;
   status?: string;
   isRecurring?: boolean;
   modifiedAt?: string;
