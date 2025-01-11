@@ -29,9 +29,6 @@ WORKDIR /app
 # Copiar o binário da etapa de construção
 COPY --from=builder /app/target/release/job_scheduler_rust ./job_scheduler_rust
 
-# Copiar outros arquivos necessários, como .env
-COPY .env .env
-
 # Expor a porta do servidor (ajuste conforme necessário)
 EXPOSE 8080
 
