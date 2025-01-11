@@ -9,5 +9,6 @@ async fn test_connect_database() {
     // Connect to the database
     let db_pool = get_database_pool(&config).await;
 
-    assert!(db_pool.acquire().await.is_ok());
+    // Check if the connection is successful
+    assert!(db_pool.is_ok());
 }

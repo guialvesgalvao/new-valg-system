@@ -11,7 +11,7 @@ lazy_static! {
 #[test]
 fn test_from_env_with_valid_vars() {
     let _lock = ENV_MUTEX.lock().unwrap();
-    env::set_var("DB_URL", "mysql://user:password@localhost/db_name");
+    env::set_var("DATABASE_URL", "mysql://user:password@localhost/db_name");
     env::set_var("RUST_ENV", "production");
 
     let config = Config::from_env();
@@ -22,6 +22,6 @@ fn test_from_env_with_valid_vars() {
     );
     assert_eq!(config.environment, "production");
 
-    env::remove_var("DB_URL");
+    env::remove_var("DATABASE_URL");
     env::remove_var("RUST_ENV");
 }

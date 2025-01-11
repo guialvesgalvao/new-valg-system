@@ -3,7 +3,7 @@ use chrono::{DateTime, NaiveDate};
 use sqlx::{prelude::FromRow, types::BigDecimal};
 
 #[derive(Debug, FromRow)]
-pub struct BillRecurrence {
+pub struct RecurrenceModel {
     pub id: i32,
 
     pub name: String,
@@ -14,7 +14,7 @@ pub struct BillRecurrence {
 
     pub end_date: Option<NaiveDate>,
 
-    pub user_id: i32,
+    pub user_id: u32,
 
     pub enabled: bool,
 

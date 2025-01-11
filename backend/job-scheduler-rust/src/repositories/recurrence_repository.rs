@@ -1,19 +1,19 @@
 use sqlx::{MySql, Pool};
 
-use crate::models::bill_recurrence_model::BillRecurrence;
+use crate::models::bill_recurrence_model::RecurrenceModel;
 
 #[derive(Debug)]
-pub struct RecurrencesRepository<'a> {
-    pub pool: &'a Pool<MySql>,
+pub struct RecurrencesRepository {
+    pub pool: Pool<MySql>,
 }
 
-impl<'a> RecurrencesRepository<'a> {
-    pub fn new(pool: &'a Pool<MySql>) -> Self {
+impl RecurrencesRepository {
+    pub fn new(pool: Pool<MySql>) -> Self {
         Self { pool }
     }
 
-    pub async fn get_active_recurrences(&self) -> Result<Vec<BillRecurrence>, sqlx::Error> {
-        let recurrences = sqlx::query_as::<_, BillRecurrence>(
+    pub async fn get_active_recurrences(&self) -> Result<Vec<RecurrenceModel>, sqlx::Error> {
+        let recurrences = sqlx::query_as::<_, RecurrenceModel>(
             r#"
             SELECT
                 id,
@@ -31,7 +31,7 @@ impl<'a> RecurrencesRepository<'a> {
                 enabled = 1 AND end_date IS NULL OR end_date >= CURDATE()
             "#,
         )
-        .fetch_all(self.pool)
+        .fetch_all(&self.pool)
         .await?;
 
         Ok(recurrences)

@@ -2,19 +2,20 @@ use sqlx::{MySql, Pool};
 
 use crate::models::bill_model::{Bill, CreateBill};
 
-pub struct BillRepository<'a> {
-    pub pool: &'a Pool<MySql>,
+#[derive(Clone)]
+pub struct BillRepository {
+    pub pool: Pool<MySql>,
 }
 
-impl<'a> BillRepository<'a> {
-    pub fn new(pool: &'a Pool<MySql>) -> Self {
+impl BillRepository {
+    pub fn new(pool: Pool<MySql>) -> Self {
         Self { pool }
     }
 
     pub async fn get_by_name_and_due_date(
         &self,
-        name: &String,
-        user_id: &i32,
+        name: &str,
+        user_id: &u32,
         due_date: &chrono::NaiveDate,
     ) -> Result<Option<Bill>, sqlx::Error> {
         let bills = sqlx::query_as::<_, Bill>(
@@ -38,7 +39,7 @@ impl<'a> BillRepository<'a> {
         .bind(name)
         .bind(user_id)
         .bind(due_date)
-        .fetch_optional(self.pool)
+        .fetch_optional(&self.pool)
         .await?;
 
         Ok(bills)
@@ -57,7 +58,7 @@ impl<'a> BillRepository<'a> {
         .bind(data.status)
         .bind(data.user_id)
         .bind(data.is_generated_by_recurrence)
-        .execute(self.pool)
+        .execute(&self.pool)
         .await?;
 
         Ok(result.last_insert_id())

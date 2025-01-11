@@ -1,8 +1,15 @@
-use crate::config::environment::Config;
-use sqlx::{MySql, MySqlPool, Pool};
+use anyhow::{Context, Result};
+use sqlx::{mysql::MySqlPoolOptions, MySql, Pool};
 
-pub async fn get_database_pool(config: &Config) -> Pool<MySql> {
-    MySqlPool::connect(&config.database_url)
+use crate::config::environment::Config;
+
+pub async fn get_database_pool(config: &Config) -> Result<Pool<MySql>> {
+    // Exemplo de opções personalizadas para o pool
+    let pool = MySqlPoolOptions::new()
+        .max_connections(5) // máximo de conexões
+        .connect(&config.database_url)
         .await
-        .expect("Failed to connect to database")
+        .context("Failed to connect to the MySQL database")?;
+
+    Ok(pool)
 }

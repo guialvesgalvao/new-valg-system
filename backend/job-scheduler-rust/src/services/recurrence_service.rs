@@ -1,19 +1,19 @@
 use crate::{
-    models::bill_recurrence_model::BillRecurrence,
+    models::bill_recurrence_model::RecurrenceModel,
     repositories::recurrence_repository::RecurrencesRepository,
 };
 
 #[derive(Debug)]
-pub struct RecurrencesService<'a> {
-    pub repository: RecurrencesRepository<'a>,
+pub struct RecurrencesService {
+    pub repository: RecurrencesRepository,
 }
 
-impl<'a> RecurrencesService<'a> {
-    pub fn new(repository: RecurrencesRepository<'a>) -> Self {
+impl RecurrencesService {
+    pub fn new(repository: RecurrencesRepository) -> Self {
         Self { repository }
     }
 
-    pub async fn get_active_recurrences(&self) -> Result<Vec<BillRecurrence>, sqlx::Error> {
+    pub async fn get_active_recurrences(&self) -> Result<Vec<RecurrenceModel>, sqlx::Error> {
         self.repository.get_active_recurrences().await
     }
 }

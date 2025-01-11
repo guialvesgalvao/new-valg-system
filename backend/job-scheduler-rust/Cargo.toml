@@ -7,10 +7,12 @@ description = "Job Scheduler in Rust, using SQLx and Cron"
 
 
 [dependencies]
+anyhow = "1.0.95"
 async-trait = "0.1.83"
 chrono = "0.4.39"
 cron = "0.14.0"
 dotenv = "0.15.0"
+futures = "0.3.31"
 lazy_static = "1.5.0"
 rust_decimal = { version = "1.36.0", features = ["serde"] }
 rust_decimal_macros = "1.36.0"
