@@ -14,7 +14,7 @@ impl<'a> BillRepository<'a> {
     pub async fn get_by_name_and_due_date(
         &self,
         name: &String,
-        user: &String,
+        user_id: &i32,
         due_date: &chrono::NaiveDate,
     ) -> Result<Option<Bill>, sqlx::Error> {
         let bills = sqlx::query_as::<_, Bill>(
@@ -26,17 +26,17 @@ impl<'a> BillRepository<'a> {
                 due_date,
                 status,
                 is_generated_by_recurrence,
-                user,
+                user_id,
                 modified_at,
                 created_at
             FROM
                 bills
             WHERE
-                name = ? AND user = ? AND due_date = ?
+                name = ? AND user_id = ? AND due_date = ?
             "#,
         )
         .bind(name)
-        .bind(user)
+        .bind(user_id)
         .bind(due_date)
         .fetch_optional(self.pool)
         .await?;
@@ -47,7 +47,7 @@ impl<'a> BillRepository<'a> {
     pub async fn create_bill(&self, data: CreateBill) -> Result<u64, sqlx::Error> {
         let result = sqlx::query(
             r#"
-            INSERT INTO bills (name, amount, due_date, status, user, is_generated_by_recurrence)
+            INSERT INTO bills (name, amount, due_date, status, user_id, is_generated_by_recurrence)
             VALUES (?, ?, ?, ?, ?, ?)
             "#,
         )
@@ -55,7 +55,7 @@ impl<'a> BillRepository<'a> {
         .bind(data.amount)
         .bind(data.due_date)
         .bind(data.status)
-        .bind(data.user)
+        .bind(data.user_id)
         .bind(data.is_generated_by_recurrence)
         .execute(self.pool)
         .await?;

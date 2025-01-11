@@ -2,14 +2,15 @@ use async_trait::async_trait;
 
 use chrono::{Datelike, NaiveDate, Utc};
 use cron::Schedule;
-use rust_decimal::prelude::ToPrimitive;
+
 use std::str::FromStr;
 
 use tokio::time::sleep;
 
 use crate::{
-    config::scheduler::SchedulerConfig,
+    config::{database::get_database_pool, environment::Config, scheduler::SchedulerConfig},
     models::bill_model::CreateBill,
+    repositories::{bill_repository::BillRepository, recurrence_repository::RecurrencesRepository},
     services::{bill_service::BillService, recurrence_service::RecurrencesService},
 };
 
@@ -18,26 +19,22 @@ pub trait Scheduler {
     async fn start_scheduler(&self, config: SchedulerConfig);
 }
 
-pub struct RecurrenceScheduler<'a> {
-    bill_service: BillService<'a>,
-    recurrence_service: RecurrencesService<'a>,
+pub struct RecurrenceScheduler {
+    config: Config,
 }
 
-impl<'a> RecurrenceScheduler<'a> {
-    pub fn new(bill_service: BillService<'a>, recurrence_service: RecurrencesService<'a>) -> Self {
-        RecurrenceScheduler {
-            bill_service,
-            recurrence_service,
-        }
+impl RecurrenceScheduler {
+    pub fn new(config: Config) -> Self {
+        RecurrenceScheduler { config }
     }
 }
 
 #[async_trait]
-impl<'a> Scheduler for RecurrenceScheduler<'a> {
-    async fn start_scheduler(&self, config: SchedulerConfig) {
+impl Scheduler for RecurrenceScheduler {
+    async fn start_scheduler(&self, scheduler_config: SchedulerConfig) {
         tracing::info!("Scheduler started!");
 
-        let schedule = Schedule::from_str(&config.cron_expression).unwrap();
+        let schedule = Schedule::from_str(&scheduler_config.cron_expression).unwrap();
 
         loop {
             let now = Utc::now();
@@ -46,16 +43,33 @@ impl<'a> Scheduler for RecurrenceScheduler<'a> {
             let duration = next_run - now;
             sleep(duration.to_std().unwrap()).await;
 
-            self.check_and_create_bills().await;
+            let db_pool = get_database_pool(&self.config).await;
+
+            let recurrences_repository = RecurrencesRepository::new(&db_pool);
+            let bill_repository = BillRepository::new(&db_pool);
+
+            let recurrences_service = RecurrencesService::new(recurrences_repository);
+            let bill_service = BillService::new(bill_repository);
+
+            self.check_and_create_bills(recurrences_service, bill_service)
+                .await;
+
+            db_pool.close().await;
+
+            tracing::info!("Next run scheduled at: {}", next_run);
         }
     }
 }
 
-impl<'a> RecurrenceScheduler<'a> {
-    async fn check_and_create_bills(&self) {
+impl RecurrenceScheduler {
+    async fn check_and_create_bills<'a>(
+        &self,
+        recurrence_service: RecurrencesService<'a>,
+        bill_service: BillService<'a>,
+    ) {
         tracing::info!("Checking and creating bills...");
 
-        let recurrences = match self.recurrence_service.get_active_recurrences().await {
+        let recurrences = match recurrence_service.get_active_recurrences().await {
             Ok(recurrences) => recurrences,
             Err(e) => {
                 tracing::error!("Error while getting active recurrences: {}", e);
@@ -69,21 +83,19 @@ impl<'a> RecurrenceScheduler<'a> {
             let due_date = NaiveDate::from_ymd_opt(
                 Utc::now().year(),
                 Utc::now().month(),
-                recurrence.day_of_due.to_u32().unwrap(),
+                recurrence.day_of_due.try_into().unwrap(),
             )
             .unwrap();
 
             let recurrence_name = recurrence.name.to_string();
-            let recurrence_user = recurrence.user.to_string();
+            let recurrence_user_id = recurrence.user_id;
 
-            let request = self.bill_service.get_by_name_and_due_date(
+            let request = bill_service.get_by_name_and_due_date(
                 &recurrence_name,
-                &recurrence_user,
+                &recurrence_user_id,
                 &due_date,
             );
 
-            // Check if the bill already exists for the recurrence and due date
-            // If it does, log a warning and continue to the next recurrence
             match request.await {
                 Ok(Some(bill)) => {
                     tracing::warn!(
@@ -98,12 +110,12 @@ impl<'a> RecurrenceScheduler<'a> {
                         name: recurrence.name,
                         amount: recurrence.average_amount,
                         status: "Pending".to_string(),
-                        user: recurrence.user,
+                        user_id: recurrence.user_id,
                         is_generated_by_recurrence: true,
                         due_date,
                     };
 
-                    let bill_id = self.bill_service.create_bill(bill).await.unwrap();
+                    let bill_id = bill_service.create_bill(bill).await.unwrap();
                     tracing::info!("Bill created with id: {}", bill_id);
                 }
                 Err(e) => {
