@@ -5,7 +5,7 @@ FROM rust:latest as builder
 WORKDIR /app
 
 # Copiar o arquivo Cargo.toml e Cargo.lock primeiro (para cache)
-COPY Cargo.toml Cargo.lock ./
+COPY Cargo.toml ./
 
 # Baixar dependências (isso evita refazer o download se não houver mudanças no Cargo.toml)
 RUN mkdir src && echo "fn main() {}" > src/main.rs && cargo fetch

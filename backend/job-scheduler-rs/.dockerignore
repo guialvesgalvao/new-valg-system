@@ -3,7 +3,6 @@ target/
 docker-compose.override.yml
 docker-compose.yml
 Dockerfile*
-.env
 *.log
 *.tmp
 *.lock
