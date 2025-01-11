@@ -14,7 +14,7 @@ fn test_from_env_with_valid_vars() {
     env::set_var("DATABASE_URL", "mysql://user:password@localhost/db_name");
     env::set_var("RUST_ENV", "production");
 
-    let config = Config::from_env();
+    let config = Config::from_env().unwrap();
 
     assert_eq!(
         config.database_url,

@@ -7,7 +7,9 @@ use tokio::time::sleep;
 
 use crate::{
     config::{database::get_database_pool, environment::Config, scheduler::SchedulerConfig},
-    models::{bill_model::CreateBill, bill_recurrence_model::RecurrenceModel},
+    models::{
+        bill_model::CreateBill, bill_recurrence_model::RecurrenceModel, bill_status::BillStatus,
+    },
     repositories::{bill_repository::BillRepository, recurrence_repository::RecurrencesRepository},
     services::{bill_service::BillService, recurrence_service::RecurrencesService},
 };
@@ -20,7 +22,7 @@ pub trait Scheduler {
 #[derive(Clone)]
 pub struct RecurrenceScheduler {
     config: Config,
-    scheduler_config: SchedulerConfig,
+    pub scheduler_config: SchedulerConfig,
 }
 
 impl RecurrenceScheduler {
@@ -128,7 +130,7 @@ async fn process_recurrence(bill_service: BillService, recurrence: RecurrenceMod
             let bill = CreateBill {
                 name: recurrence.name.clone(),
                 amount: recurrence.average_amount,
-                status: "Pending".to_string(),
+                status: BillStatus::Pending,
                 user_id: recurrence.user_id.clone(),
                 is_generated_by_recurrence: true,
                 due_date,

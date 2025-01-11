@@ -1,12 +1,22 @@
-use crate::config::environment::Config;
+use crate::{config::environment::Config, errors::config_errors::ConfigError};
+use anyhow::{bail, Result};
 
-pub fn validate_config(config: &Config) -> Result<(), String> {
+/// Valida se as variáveis mínimas de ambiente foram definidas.
+///
+/// # Erros
+///
+/// Retorna `Err(ConfigError)` se:
+/// - `environment` estiver vazio
+/// - `database_url` estiver vazio
+///
+/// Retorna `Ok(())` se ambos estiverem configurados corretamente.
+pub fn validate_config(config: &Config) -> Result<(), ConfigError> {
     if config.environment.is_empty() {
-        return Err("Environment is not set".to_string());
+        return Err(ConfigError::MissingEnvironment);
     }
 
     if config.database_url.is_empty() {
-        return Err("Database URL is not set".to_string());
+        return Err(ConfigError::MissingDatabaseUrl);
     }
 
     Ok(())

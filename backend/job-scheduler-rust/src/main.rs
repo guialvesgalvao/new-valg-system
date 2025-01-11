@@ -1,5 +1,6 @@
 mod bootstrap;
 mod config;
+mod errors;
 mod models;
 mod repositories;
 mod scheduler;
@@ -20,13 +21,8 @@ use anyhow::Result;
 fn main() -> Result<()> {
     let rt = Runtime::new()?;
 
-    let config: Config = Config::from_env();
-
-    if let Err(e) = validate_config(&config) {
-        eprintln!("Configuration validation failed: {}", e);
-
-        return Ok(());
-    }
+    let config: Config = Config::from_env()?;
+    validate_config(&config)?;
 
     let scheduler_config = generate_scheduler_config(&config);
 

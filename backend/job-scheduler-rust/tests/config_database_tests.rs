@@ -4,7 +4,7 @@ use job_scheduler_rust::config::environment::Config;
 #[tokio::test]
 async fn test_connect_database() {
     // Load the configuration from the environment
-    let config = Config::from_env();
+    let config = Config::from_env().unwrap();
 
     // Connect to the database
     let db_pool = get_database_pool(&config).await;
