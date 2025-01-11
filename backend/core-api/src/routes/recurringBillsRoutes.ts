@@ -5,15 +5,16 @@ import {
   updateRecurringBill,
   deleteRecurringBill
 } from "../controllers/recurringBillsController";
+import { authenticateToken } from "../middlewares/authenticateToken";
 
 const recurringBillsRouter = Router();
 
-recurringBillsRouter.get("/", getRecurringBills);
+recurringBillsRouter.get("/", authenticateToken, getRecurringBills);
 
-recurringBillsRouter.post("/", createRecurringBill);
+recurringBillsRouter.post("/", authenticateToken, createRecurringBill);
 
-recurringBillsRouter.patch("/:id", updateRecurringBill);
+recurringBillsRouter.patch("/:id", authenticateToken, updateRecurringBill);
 
-recurringBillsRouter.delete("/:id", deleteRecurringBill);
+recurringBillsRouter.delete("/:id", authenticateToken, deleteRecurringBill);
 
 export { recurringBillsRouter };

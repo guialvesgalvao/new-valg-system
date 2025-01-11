@@ -1,18 +1,17 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 import { transformBillToText } from "../services/transformBillToText";
 import { IBill } from "../shared/interfaces/IBill";
 import { transformTextInBill } from "../services/transformTextInBill";
 import { validateBill } from "../services/validateBill";
 import { findBillIdWithOpenAI } from "../services/findBillIdWithOpenAI";
 import { BillService } from "../services/BillService";
-import { ICustomRequest } from "../interfaces/ICustomRequest";
-import { BillRepository } from "../repositories/billRepository";
+import { BillRepository } from "../repositories/BillRepository";
 
-async function getBills(req: ICustomRequest, res: Response): Promise<void> {
+async function getBills(req: Request, res: Response): Promise<void> {
   const { isOverdue, returnMode } = req.query;
-  const userId = req.userId;
+  const userId = res.locals.userId;
 
-  try {    
+  try {
     const billService = new BillService(userId);
     const bills = await billService.get(isOverdue === "true");
 
@@ -22,27 +21,27 @@ async function getBills(req: ICustomRequest, res: Response): Promise<void> {
     }
 
     const transformedBills = transformBillToText(bills);
-    
+
     res.status(200).json(transformedBills);
   } catch (error) {
-    res.status(500).json({ error: 'Não foi possível coletar as contas' });
+    res.status(500).json({ error: "Não foi possível coletar as contas" });
   }
 }
 
-async function createBill(req: ICustomRequest, res: Response) {
+async function createBill(req: Request, res: Response) {
   const { dataType, data } = req.body;
-  const userId = req.userId;
-  
+  const userId = res.locals.userId;
+
   try {
     if (!data || !dataType) {
       res.status(400).json({ error: "os parâmetros 'dataType' e 'data' são obrigatórios" });
       return;
     }
-    
+
     const bill: IBill = dataType === "text" ? await transformTextInBill(data) : data;
-    
+
     const billValidator = validateBill(bill);
-    
+
     if (billValidator) {
       res.status(400).json({ error: billValidator });
       return;
@@ -51,20 +50,20 @@ async function createBill(req: ICustomRequest, res: Response) {
     const billRepository = new BillRepository(userId);
     const createBill = await billRepository.create(bill);
 
-    if(createBill){
+    if (createBill) {
       res.status(201).json({ message: "Conta criada com sucesso!" });
-      return 
+      return;
     }
 
-    res.status(500).json({ error: "Erro ao processar a conta informada"})
+    res.status(500).json({ error: "Erro ao processar a conta informada" });
   } catch (error) {
     res.status(500).json({ error: "Erro ao processar a conta informada" });
   }
 }
 
-async function updateBill(req: ICustomRequest, res: Response) {
+async function updateBill(req: Request, res: Response) {
   const { data } = req.body;
-  const userId = req.userId;
+  const userId = res.locals.userId;
   const billRepository = new BillRepository(userId);
   const billService = new BillService(userId);
 
@@ -80,11 +79,11 @@ async function updateBill(req: ICustomRequest, res: Response) {
       return;
     }
 
-    const updateBill = await billService.updateBillMetadata(data, data.id); 
+    const updateBill = await billService.updateBillMetadata(data, data.id);
 
-    if(updateBill){
+    if (updateBill) {
       res.status(201).json({ message: "Conta atualizada com sucesso!" });
-      return
+      return;
     }
 
     res.status(500).json({ error: "Erro durante o processo de atualização da conta" });
@@ -93,18 +92,18 @@ async function updateBill(req: ICustomRequest, res: Response) {
   }
 }
 
-async function deleteBill(req: ICustomRequest, res: Response) {
+async function deleteBill(req: Request, res: Response) {
   const { id } = req.params;
-  const userId = req.userId;
+  const userId = res.locals.userId;
   const billRepository = new BillRepository(userId);
-  
+
   try {
     const parsedId = parseInt(id);
     if (!parsedId) {
       res.status(400).json({ error: "É necessário informar um ID da conta que será deletada" });
       return;
     }
-    
+
     const checkBillExist = await billRepository.checkBillExist(parsedId);
 
     if (checkBillExist) {
@@ -112,7 +111,7 @@ async function deleteBill(req: ICustomRequest, res: Response) {
       return;
     }
 
-    const deleteBill = await billRepository.delete(parsedId); 
+    const deleteBill = await billRepository.delete(parsedId);
 
     if (deleteBill) {
       res.status(200).json({ message: "Conta deletada com sucesso" });
@@ -125,9 +124,9 @@ async function deleteBill(req: ICustomRequest, res: Response) {
   }
 }
 
-async function findBillId(req: ICustomRequest, res: Response) {
+async function findBillId(req: Request, res: Response) {
   const { data } = req.body;
-  const userId = req.userId;
+  const userId = res.locals.userId;
 
   if (!data || data.trim() === "") {
     res.status(400).json({ error: "É necessário informar o parâmetro data com o texto do usuário" });

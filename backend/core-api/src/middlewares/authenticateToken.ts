@@ -1,10 +1,9 @@
-import { Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { SessionRepository } from "../repositories/SessionRepository";
-import { ICustomRequest } from "../interfaces/ICustomRequest";
+import { JWT_LONG_SECRET } from "..";
 
-
-export async function authenticateToken(req: ICustomRequest, res: Response, next: NextFunction): Promise<void> {
+export async function authenticateToken(req: Request, res: Response, next: NextFunction): Promise<void> {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     res.status(401).json({ error: "Token não encontrado" });
@@ -25,7 +24,7 @@ export async function authenticateToken(req: ICustomRequest, res: Response, next
     return;
   }
 
-  req.userId = userId;
+  res.locals.userId = userId;
 
   next();
 }
@@ -34,7 +33,7 @@ async function validateAccessToken(accessToken: string): Promise<number | null> 
   const session = new SessionRepository();
 
   try {
-    const decoded = jwt.verify(accessToken, process.env.JWT_LONG_SECRET ?? "") as JwtPayload;
+    const decoded = jwt.verify(accessToken, JWT_LONG_SECRET) as JwtPayload;
 
     const { userId } = decoded;
 

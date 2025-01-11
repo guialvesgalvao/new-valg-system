@@ -21,6 +21,7 @@
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.11.5",
     "ts-node": "^10.9.2",
+    "winston": "^3.17.0",
     "zod": "^3.24.1"
   },
   "devDependencies": {

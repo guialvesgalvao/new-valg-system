@@ -1,18 +1,13 @@
 import { Request, Response } from "express";
-import pool from "../config/db";
-import { IBill, IUnvalidatedBills } from "../shared/interfaces/IBill";
+import { RecurringBillService } from "../services/RecurringBillService";
+import { RecurringBillRepository } from "../repositories/RecurringBillRepository";
 
-import { getObjectMetadata } from "../services/getObjectMetadata";
-import { recurringBillsValidator } from "../shared/validations/recurringBillsValidator";
-import { recurringBillsFormatter } from "../shared/formatters/recurringBillsFormatter";
-import { IRecurringBillDBSchema } from "../shared/interfaces/IRecurringBill";
+async function getRecurringBills(req: Request, res: Response) {
+  const userId = res.locals.userId;
+  const service = new RecurringBillService(userId);
 
-async function getRecurringBills(req: Request, res: Response): Promise<void> {
   try {
-    const SQLQuery = "SELECT * FROM bill_recurrences";
-
-    const [rows] = await pool.query(SQLQuery);
-    const recurringBills = recurringBillsFormatter(rows as IRecurringBillDBSchema[]);
+    const recurringBills = await service.get();
 
     res.status(200).json(recurringBills);
   } catch (error) {
@@ -22,6 +17,8 @@ async function getRecurringBills(req: Request, res: Response): Promise<void> {
 
 async function createRecurringBill(req: Request, res: Response) {
   const { data } = req.body;
+  const userId = res.locals.userId;
+  const service = new RecurringBillService(userId);
 
   if (!data) {
     res.status(400).json({ error: "É necessário informar o parâmetro 'data' com o array de contas à ser criada" });
@@ -29,26 +26,11 @@ async function createRecurringBill(req: Request, res: Response) {
   }
 
   try {
-    const recurringBillValidator = recurringBillsValidator.safeParse(data);
+    const createBill = await service.create(data);
 
-    if (recurringBillValidator.error) {
-      res.status(400).json({ error: recurringBillValidator.error });
-      return;
+    if (createBill) {
+      res.status(400).json({ error: createBill });
     }
-
-    const SQLQuery = `
-        INSERT INTO bill_recurrences (name, average_amount, day_of_due, end_date, user, enabled)
-        VALUES (?, ?, ?, ?, ?, ?)
-      `;
-
-    await pool.query(SQLQuery, [
-      data.name,
-      data.averageAmount,
-      data.dayOfDue,
-      data.endDate,
-      data.enabled,
-      "default_user"
-    ]);
 
     res.status(201).json({ message: "Conta recorrente criada com sucesso!" });
   } catch (error) {
@@ -59,8 +41,11 @@ async function createRecurringBill(req: Request, res: Response) {
 async function updateRecurringBill(req: Request, res: Response) {
   const { data } = req.body;
   const { id } = req.query;
+  const userId = res.locals.userId;
+  const service = new RecurringBillService(userId);
+  const repository = new RecurringBillRepository(userId);
 
-  if (!id) {
+  if (!parseInt(id as string)) {
     res.status(400).json({ error: "Id para atualização não informado" });
     return;
   }
@@ -71,34 +56,20 @@ async function updateRecurringBill(req: Request, res: Response) {
   }
 
   try {
-    const [existingBill] = await pool.query("SELECT * FROM bill_recurrences WHERE id = ?", [id]);
+    const checkBillExist = await repository.checkRecurringBillExist(parseInt(id as string));
 
-    if ((existingBill as IBill[]).length === 0) {
+    if (!checkBillExist) {
       res.status(404).json({ error: "Conta recorrente não encontrada." });
       return;
     }
 
-    const fieldMap = {
-      name: "name",
-      amount: "amount",
-      due_date: "due_date",
-      status: "status",
-      isRecurring: []
-    };
-  
-
-    const { fieldsToUpdate, metadataValues } = getObjectMetadata<IUnvalidatedBills>(data, fieldMap);
-
-    if (fieldsToUpdate.length === 0) {
-      res.status(400).json({ error: "Nenhum campo foi informado para atualização." });
+    const updateBill = await service.updateRecurringBillMetadata(data, parseInt(id as string));
+    if (updateBill) {
+      res.status(201).json({ message: "Conta recorrente atualizada com sucesso!" });
       return;
     }
 
-    const SQLUpdateQuery = `UPDATE bill_recurrences SET ${fieldsToUpdate.join(", ")} WHERE id = ?`;
-
-    await pool.query(SQLUpdateQuery, [...metadataValues, data.id]);
-
-    res.status(201).json({ message: "Conta recorrente atualizada com sucesso!" });
+    res.status(500).json({ error: "Erro durante o processo de atualização da conta recorrente" });
   } catch (error) {
     res.status(500).json({ error: "Erro durante o processo de atualização da conta recorrente" });
   }
@@ -106,29 +77,34 @@ async function updateRecurringBill(req: Request, res: Response) {
 
 async function deleteRecurringBill(req: Request, res: Response) {
   const { id } = req.params;
+  const userId = res.locals.userId;
+  const repository = new RecurringBillRepository(userId);
 
   if (!id) {
     res.status(400).json({
-      error: "É necessário informar um ID da conta recorrente que será deletada"
+      error: "É necessário informar o ID da conta recorrente que será deletada"
     });
     return;
   }
 
   try {
-    const [existingBill] = await pool.query("SELECT * FROM bill_recurrences WHERE id = ?", [id]);
+    const checkBillExist = await repository.checkRecurringBillExist(parseInt(id));
 
-    if ((existingBill as IBill[]).length === 0) {
+    if (!checkBillExist) {
       res.status(404).json({ error: "Conta não encontrada." });
       return;
     }
 
-    const SQLQuery = `DELETE FROM bill_recurrences WHERE id = ${id}`;
+    const deleteRecurringBill = await repository.delete(parseInt(id));
 
-    await pool.query(SQLQuery);
+    if (deleteRecurringBill) {
+      res.status(200).json({ message: "Conta deletada com sucesso" });
+      return;
+    }
 
-    res.status(200).json({ message: "Conta deletada com sucesso" });
+    res.status(500).json({ error: "Erro no processo de exclusão da conta" });
   } catch (error) {
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: "Erro no processo de exclusão da conta" });
   }
 }
 
