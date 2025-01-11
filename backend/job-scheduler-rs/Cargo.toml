@@ -1,0 +1,37 @@
+[package]
+name = "job_scheduler_rust"
+version = "1.0.0"
+edition = "2021"
+authors = ["Lucas Pedro da Hora <lucaspedro517@gmail.com>"]
+description = "Job Scheduler in Rust, using SQLx and Cron"
+
+
+[dependencies]
+anyhow = "1.0.95"
+async-trait = "0.1.83"
+chrono = "0.4.39"
+cron = "0.14.0"
+dotenv = "0.15.0"
+futures = "0.3.31"
+lazy_static = "1.5.0"
+rust_decimal = { version = "1.36.0", features = ["serde"] }
+rust_decimal_macros = "1.36.0"
+serde = { version = "1.0.217", features = ["derive"] }
+sqlx = { version = "0.8.2", features = [
+  "runtime-tokio-rustls",
+  "macros",
+  "mysql",
+  "chrono",
+  "bigdecimal",
+] }
+thiserror = "2.0.11"
+tokio = { version = "1.42.0", features = ["full"] }
+tracing = "0.1.41"
+tracing-appender = "0.2.3"
+tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
+
+
+[dev-dependencies]
+# Testes e ambiente de desenvolvimento
+sqlx-cli = { version = "0.8.2", features = ["mysql"] }
+assert-json-diff = "2.0"
