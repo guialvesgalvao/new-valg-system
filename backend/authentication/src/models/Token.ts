@@ -3,7 +3,8 @@ import pool from "../config/db";
 import { TokenType } from "../shared/enums/TokenType";
 import { generateDateForExpire } from "../shared/helpers/generateDateForExpire";
 import jwt, { DecodedToken } from "jsonwebtoken";
-import { SessionRepository } from "../repositories/sessionRepository";
+import { SessionRepository } from "../repositories/SessionRepository";
+import { JWT_LONG_SECRET } from "..";
 
 export class Token {
   userId: number;
@@ -25,7 +26,7 @@ export class Token {
 
     const acessToken = jwt.sign(
       { userId: this.userId },
-      process.env.JWT_LONG_SECRET,
+      JWT_LONG_SECRET,
       {
         expiresAt: acessTokenExpiresDate,
       }
@@ -33,7 +34,7 @@ export class Token {
 
     const refreshToken = jwt.sign(
       { userId: this.userId },
-      process.env.JWT_LONG_SECRET,
+      JWT_LONG_SECRET,
       {
         expiresAt: refreshTokenExpiresDate,
       }
@@ -53,7 +54,7 @@ export class Token {
 
       const acessToken = jwt.sign(
         { userId: this.userId },
-        process.env.JWT_LONG_SECRET,
+        JWT_LONG_SECRET,
         {
           expiresAt: acessTokenExpiresDate,
         }
@@ -87,7 +88,7 @@ export class Token {
     
     const validate = jwt.verify(
       acessToken,
-      process.env.JWT_LONG_SECRET ?? '',
+      JWT_LONG_SECRET,
       async (err, decoded) => {
         if (err) return null;
 

@@ -22,7 +22,7 @@ export async function validateAcessToken(req: Request, res: Response, next: Next
     return
   }
 
-  req.body = userId;
+  res.locals.userId = userId;
 
   next()
 }

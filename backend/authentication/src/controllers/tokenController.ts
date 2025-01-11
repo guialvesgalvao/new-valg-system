@@ -3,9 +3,10 @@ import jwt from "jsonwebtoken";
 import { TokenType } from "../shared/enums/TokenType";
 import { Token } from "../models/Token";
 import { SessionRepository } from "../repositories/sessionRepository";
+import { JWT_LONG_SECRET } from "..";
 
 async function createLongLifeToken(req: Request, res: Response): Promise<void> {
-  const { userId } = req.body;
+  const userId = res.locals.userId;
 
   try {
     const token = new Token(userId);
@@ -49,7 +50,7 @@ async function refreshToken(req: Request, res: Response): Promise<void> {
       res.status(401).json({ error: "Token inválido" });
       return;
     }
-    const decodedJWT = jwt.verify(refreshToken, process.env.JWT_LONG_SECRET);
+    const decodedJWT = jwt.verify(refreshToken, JWT_LONG_SECRET);
 
     if (!decodedJWT.userId) {
       res.status(401).json({ error: "Token inválido" });
