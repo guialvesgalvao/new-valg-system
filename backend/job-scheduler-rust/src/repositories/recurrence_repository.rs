@@ -21,7 +21,7 @@ impl<'a> RecurrencesRepository<'a> {
                 average_amount,
                 day_of_due,
                 end_date,
-                user,
+                user_id,
                 enabled,
                 modified_at,
                 created_at

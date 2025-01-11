@@ -15,11 +15,11 @@ impl<'a> BillService<'a> {
     pub async fn get_by_name_and_due_date(
         &self,
         name: &String,
-        user: &String,
+        user_id: &i32,
         date: &chrono::NaiveDate,
     ) -> Result<Option<Bill>, sqlx::Error> {
         self.repository
-            .get_by_name_and_due_date(name, user, date)
+            .get_by_name_and_due_date(name, user_id, date)
             .await
     }
 

@@ -14,18 +14,10 @@ pub struct BillRecurrence {
 
     pub end_date: Option<NaiveDate>,
 
-    pub user: String,
+    pub user_id: i32,
 
     pub enabled: bool,
 
     pub modified_at: DateTime<chrono::Utc>,
     pub created_at: DateTime<chrono::Utc>,
-}
-
-pub struct CreateBillRecurrence {
-    pub name: String,
-    pub average_amount: i32,
-    pub day_of_due: i32,
-    pub end_date: Option<NaiveDate>,
-    pub user: String,
 }
