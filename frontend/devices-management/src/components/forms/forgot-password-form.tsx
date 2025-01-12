@@ -29,7 +29,7 @@ export function ForgotPasswordForm() {
     resolver: zodResolver(forgotPasswordValidation),
   });
 
-  const { isLoading, isSubmitting } = form.formState;
+  const { isLoading, isSubmitting, isValid } = form.formState;
 
   async function onSubmit(data: ForgotPasswordValidationType) {
     console.log(data);
@@ -52,7 +52,7 @@ export function ForgotPasswordForm() {
                 <FormControl>
                   <Input
                     {...field}
-                    className="w-full h-12"
+                    className="w-full h-10 md:h-12"
                     type="email"
                     placeholder="Enter your email"
                     value={field.value ?? ""}
@@ -68,7 +68,7 @@ export function ForgotPasswordForm() {
           className="h-12 gap-x-2"
           variant="default"
           type="submit"
-          disabled={isSubmitting || isLoading}
+          disabled={isSubmitting || isLoading || !isValid}
         >
           <Send size={20} />
           Reset Password

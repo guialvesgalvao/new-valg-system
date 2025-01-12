@@ -1,0 +1,19 @@
+{
+  "GetStartedTitle": "Get Started",
+  "GetStartedDescription": "Start using the system right now",
+  "GetStartedOrder1": "Create your account",
+  "GetStartedOrder2": "Set up your profile",
+  "GetStartedOrder3": "Manage your API keys",
+
+  "LoginTitle": "Login",
+  "LoginDescription": "Log in to access the system",
+  "LoginNoAccount": "Don't have an account?",
+  "LoginCreateAccount": "Create an account",
+  "LoginForgotPassword": "Forgot your password?",
+
+  "RegisterTitle": "Register",
+  "RegisterDescription": "Create an account to access the system",
+  "RegisterAlreadyAccount": "Already have an account?",
+  "RegisterLogin": "Log in",
+  "RegisterTerms": "By clicking create account, you agree to our terms of use and privacy policy"
+}

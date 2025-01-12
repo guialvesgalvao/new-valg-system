@@ -25,15 +25,15 @@ import { FieldSpacer } from "./field-spacer";
 export function RegisterForm() {
   const form = useForm<RegisterValidationType>({
     defaultValues: {
-      fullName: "",
       email: "",
       password: "",
       confirmPassword: "",
     },
     resolver: zodResolver(registerValidation),
+    mode: "all",
   });
 
-  const { isLoading, isSubmitting } = form.formState;
+  const { isLoading, isSubmitting, isValid } = form.formState;
 
   async function onSubmit(data: RegisterValidationType) {
     console.log(data);
@@ -47,29 +47,6 @@ export function RegisterForm() {
       >
         <FieldSpacer>
           <FormField
-            name="fullName"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Full Name</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    className="w-full h-12"
-                    type="email"
-                    placeholder="Enter your full name"
-                    value={field.value ?? ""}
-                  />
-                </FormControl>
-                <FormDescription>
-                  Must be at least 2 characters long.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
             name="email"
             control={form.control}
             render={({ field }) => (
@@ -78,7 +55,7 @@ export function RegisterForm() {
                 <FormControl>
                   <Input
                     {...field}
-                    className="w-full h-12"
+                    className="w-full h-10 md:h-12"
                     type="email"
                     placeholder="Enter your email"
                     value={field.value ?? ""}
@@ -101,7 +78,7 @@ export function RegisterForm() {
                 <FormControl>
                   <Input
                     {...field}
-                    className="w-full h-12"
+                    className="w-full h-10 md:h-12"
                     type="password"
                     placeholder="Enter your password"
                     value={field.value ?? ""}
@@ -124,7 +101,7 @@ export function RegisterForm() {
                 <FormControl>
                   <Input
                     {...field}
-                    className="w-full h-12"
+                    className="w-full h-10 md:h-12"
                     type="password"
                     placeholder="Confirm your password"
                     value={field.value ?? ""}
@@ -143,7 +120,7 @@ export function RegisterForm() {
           className="h-12 gap-x-2"
           variant="default"
           type="submit"
-          disabled={isSubmitting || isLoading}
+          disabled={isSubmitting || isLoading || !isValid}
         >
           <UserRoundPlus size={20} />
           Sign up

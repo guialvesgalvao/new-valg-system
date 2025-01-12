@@ -33,7 +33,7 @@ export function LoginForm() {
     resolver: zodResolver(loginValidation),
   });
 
-  const { isLoading, isSubmitting } = form.formState;
+  const { isLoading, isSubmitting, isValid } = form.formState;
 
   async function onSubmit(data: LoginValidationType) {
     console.log(data);
@@ -64,7 +64,7 @@ export function LoginForm() {
                 <FormControl>
                   <Input
                     {...field}
-                    className="w-full h-12"
+                    className="w-full h-10 md:h-12"
                     type="email"
                     placeholder="Enter your email"
                     value={field.value ?? ""}
@@ -84,7 +84,7 @@ export function LoginForm() {
                 <FormControl>
                   <Input
                     {...field}
-                    className="w-full h-12"
+                    className="w-full h-10 md:h-12"
                     type="password"
                     placeholder="Enter your password"
                     value={field.value ?? ""}
@@ -103,7 +103,7 @@ export function LoginForm() {
           className="h-12 gap-x-2"
           variant="default"
           type="submit"
-          disabled={isSubmitting || isLoading}
+          disabled={isSubmitting || isLoading || !isValid}
         >
           <LogIn size={20} />
           Log in

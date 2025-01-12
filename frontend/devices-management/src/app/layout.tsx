@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Poppins } from "next/font/google";
 
 import "./globals.css";
+import Providers from "@/components/providers";
 
-const interFont = Inter();
+const interFont = Poppins({
+  weight: ["300", "400", "500", "600", "700", "800"],
+});
 
 export const metadata: Metadata = {
-  title: "New Valg - Devices Management",
+  title: "Valg - Devices Management",
   description: "Manage your devices with ease",
 };
 
@@ -17,7 +20,9 @@ interface IRootLayoutProps {
 export default function RootLayout({ children }: Readonly<IRootLayoutProps>) {
   return (
     <html lang="en">
-      <body className={`${interFont.className}  antialiased`}>{children}</body>
+      <body className={`${interFont.className}  antialiased`}>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
