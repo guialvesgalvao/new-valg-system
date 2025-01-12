@@ -9,7 +9,7 @@ import { AuthService } from "../services/auth-service";
  * Encapsula a lógica de instanciamento para facilitar a reusabilidade e manutenção.
  */
 const initializeAuthService = (): AuthService => {
-  const instance = apiInstance;
+  const instance = apiInstance();
   const service = new ApiService(instance);
   const repository = new AuthRepository(service);
   return new AuthService(repository);
