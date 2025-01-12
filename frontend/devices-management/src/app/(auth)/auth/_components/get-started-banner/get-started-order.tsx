@@ -1,6 +1,8 @@
-import { buttonVariants } from "@/components/ui/button";
+"use client";
+
 import { OrderPath } from "./get-started-banner";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 interface IOrderPathCompProps extends OrderPath {
   order: number;
@@ -12,7 +14,15 @@ export function OrderPathComp(props: Readonly<IOrderPathCompProps>) {
   const { order, children, active } = props;
 
   return (
-    <li
+    <motion.li
+      variants={{
+        hidden: {
+          opacity: 0,
+        },
+        visible: {
+          opacity: 1,
+        },
+      }}
       className={cn(
         "w-full min-h-32 h-full flex flex-col gap-y-5 justify-start p-4 py-6 rounded-md shadow-md",
         active
@@ -50,6 +60,6 @@ export function OrderPathComp(props: Readonly<IOrderPathCompProps>) {
       >
         {children}
       </p>
-    </li>
+    </motion.li>
   );
 }

@@ -10,7 +10,7 @@ interface ILayoutAuthProps {
 export default function LayoutAuth({ children }: Readonly<ILayoutAuthProps>) {
   return (
     <div className="bg-background w-full h-screen flex flex-col md:flex-row items-center justify-start p-6">
-      <div className="hidden lg:block w-full h-full">
+      <aside className="hidden lg:block w-full h-full">
         <GetStartedBanner
           title="Get started with us"
           subtitle="Create an account to start your journey with us."
@@ -23,9 +23,9 @@ export default function LayoutAuth({ children }: Readonly<ILayoutAuthProps>) {
             },
           ]}
         />
-      </div>
+      </aside>
 
-      <div className="w-full h-full flex flex-col items-center justify-center relative">
+      <section className="w-full h-full flex flex-col items-center justify-center relative">
         <div className="max-w-[800px] w-full h-full">{children}</div>
         <div className="flex lg:hidden">
           <Logo />
@@ -34,7 +34,7 @@ export default function LayoutAuth({ children }: Readonly<ILayoutAuthProps>) {
         <div className="absolute top-4 right-4 lg:hidden">
           <ModeToggle />
         </div>
-      </div>
+      </section>
     </div>
   );
 }

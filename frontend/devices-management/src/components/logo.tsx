@@ -1,4 +1,7 @@
+"use client";
+
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 import { Mic } from "lucide-react";
 
 interface ILogoProps {
@@ -9,14 +12,19 @@ export function Logo(props: Readonly<ILogoProps>) {
   const { className } = props;
 
   return (
-    <div
+    <motion.div
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.9 }}
+      animate={{ opacity: [0, 1] }}
       className={cn(
-        "flex items-center justify-center gap-x-2 cursor-default",
+        "flex items-center gap-2 select-none cursor-default",
         className
       )}
     >
-      <Mic size={28} />
-      <h4 className="text-xl font-bold">Valg</h4>
-    </div>
+      <Mic className="w-6 h-6 md:w-8 md:h-8" />
+      <h1 className="font-bold">
+        <span>Valg</span> System
+      </h1>
+    </motion.div>
   );
 }

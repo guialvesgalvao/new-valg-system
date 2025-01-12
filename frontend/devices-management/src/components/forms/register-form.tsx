@@ -25,6 +25,7 @@ import { toast } from "sonner";
 import { authService } from "@/shared/http/factories/auth-factory";
 import { redirect } from "next/navigation";
 import { AppPath } from "@/path";
+import { motion } from "framer-motion";
 
 export function RegisterForm() {
   const form = useForm<RegisterValidationType>({
@@ -69,9 +70,12 @@ export function RegisterForm() {
 
   return (
     <Form {...form}>
-      <form
+      <motion.form
         className="w-full flex flex-col gap-y-8"
         onSubmit={form.handleSubmit(onSubmit)}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
       >
         <FieldSpacer>
           <FormField
@@ -90,7 +94,7 @@ export function RegisterForm() {
                   />
                 </FormControl>
                 <FormDescription>
-                  We'll never share your email with anyone else.
+                  We&#39;ll never share your email with anyone else.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -153,7 +157,7 @@ export function RegisterForm() {
           <UserRoundPlus size={20} />
           Sign up
         </Button>
-      </form>
+      </motion.form>
     </Form>
   );
 }

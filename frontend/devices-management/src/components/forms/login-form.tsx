@@ -28,6 +28,7 @@ import { authService } from "@/shared/http/factories/auth-factory";
 import { toast } from "sonner";
 import { redirect } from "next/navigation";
 import { RedirectText } from "../redirect-text";
+import { motion } from "framer-motion";
 
 export function LoginForm() {
   const form = useForm<LoginValidationType>({
@@ -39,7 +40,7 @@ export function LoginForm() {
     mode: "all",
   });
 
-  const { isLoading, isSubmitting, isValid } = form.formState;
+  const { isSubmitting, isValid } = form.formState;
 
   async function onSubmit(data: LoginValidationType) {
     try {
@@ -70,9 +71,12 @@ export function LoginForm() {
 
   return (
     <Form {...form}>
-      <form
+      <motion.form
         className="w-full flex flex-col gap-y-8"
         onSubmit={form.handleSubmit(onSubmit)}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
       >
         <FieldSpacer>
           <FormField
@@ -137,7 +141,7 @@ export function LoginForm() {
           <LogIn size={20} />
           Log in
         </Button>
-      </form>
+      </motion.form>
     </Form>
   );
 }

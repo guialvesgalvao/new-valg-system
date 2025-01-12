@@ -8,6 +8,7 @@ import {
   AuthNoiseTopVector,
 } from "@/components/icons/auth-noise-vector";
 import { ModeToggle } from "../theme-toogle";
+import { motion } from "framer-motion";
 
 export interface OrderPath {
   name: string;
@@ -38,26 +39,46 @@ export function GetStartedBanner(props: Readonly<IGetStartedBannerProps>) {
     >
       <div className="w-full flex flex-col">
         <div className="w-full flex justify-between items-center z-10">
-          <div className="w-full flex items-start justify-start text-primary-foreground dark:text-primary">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="w-full flex items-start justify-start text-primary-foreground dark:text-primary"
+          >
             <Logo />
-          </div>
+          </motion.div>
 
           <ModeToggle />
         </div>
 
-        <h1 className="text-muted dark:text-primary text-xl font-medium">
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="text-muted dark:text-primary text-xl font-medium"
+        >
           Devices Management
-        </h1>
+        </motion.h2>
       </div>
 
       <div className="w-full flex flex-col gap-y-10 z-10">
         <div className="w-full flex flex-col items-start justify-start gap-y-2">
-          <h1 className="text-primary-foreground dark:text-primary text-[32px] font-semibold">
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-primary-foreground dark:text-primary text-[32px] font-semibold"
+          >
             {title}
-          </h1>
-          <h3 className="text-primary-foreground dark:text-accent-foreground text-base font-normal">
+          </motion.h1>
+          <motion.h3
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="text-primary-foreground dark:text-accent-foreground text-base font-normal"
+          >
             {subtitle}
-          </h3>
+          </motion.h3>
         </div>
 
         <RenderOrdersPaths orders={sortedOrders} />

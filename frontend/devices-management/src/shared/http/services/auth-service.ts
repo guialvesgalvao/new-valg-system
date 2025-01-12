@@ -1,4 +1,3 @@
-import { delay } from "@/lib/mock";
 import { AuthRepository } from "../repositories/auth-repository";
 import { BaseService } from "./base-service";
 

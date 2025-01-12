@@ -22,6 +22,7 @@ import {
 } from "@/shared/validations/forgot-password-validation";
 import { toast } from "sonner";
 import { authService } from "@/shared/http/factories/auth-factory";
+import { motion } from "framer-motion";
 
 export function ForgotPasswordForm() {
   const form = useForm<ForgotPasswordValidationType>({
@@ -63,7 +64,7 @@ export function ForgotPasswordForm() {
 
   return (
     <Form {...form}>
-      <form
+      <motion.form
         className="w-full flex flex-col gap-y-8"
         onSubmit={form.handleSubmit(onSubmit)}
       >
@@ -99,7 +100,7 @@ export function ForgotPasswordForm() {
           <Send size={20} />
           Reset Password
         </Button>
-      </form>
+      </motion.form>
     </Form>
   );
 }
