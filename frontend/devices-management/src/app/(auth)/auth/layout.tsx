@@ -1,4 +1,5 @@
 import { Logo } from "@/components/logo";
+
 import { GetStartedBanner } from "./_components/get-started-banner/get-started-banner";
 import { ModeToggle } from "./_components/theme-toogle";
 
@@ -24,8 +25,11 @@ export default function LayoutAuth({ children }: Readonly<ILayoutAuthProps>) {
         />
       </div>
 
-      <div className="w-full h-full flex items-center justify-center relative">
+      <div className="w-full h-full flex flex-col items-center justify-center relative">
         <div className="max-w-[800px] w-full h-full">{children}</div>
+        <div className="flex lg:hidden">
+          <Logo />
+        </div>
 
         <div className="absolute top-4 right-4 lg:hidden">
           <ModeToggle />

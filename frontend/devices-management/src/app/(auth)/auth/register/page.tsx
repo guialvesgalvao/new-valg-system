@@ -1,8 +1,8 @@
 import { AppPath } from "@/path";
 
-import { AuthTitle } from "../_components/auth-title";
-import { RedirectText } from "../_components/redirect-text";
 import { RegisterForm } from "@/components/forms/register-form";
+import { AuthTitle } from "../_components/auth-title";
+import { RedirectText } from "../../../../components/redirect-text";
 
 export default function RegisterPage() {
   return (

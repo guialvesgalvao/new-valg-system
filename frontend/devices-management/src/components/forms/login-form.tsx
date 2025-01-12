@@ -21,12 +21,13 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { LogIn } from "lucide-react";
 import { FieldSpacer } from "./field-spacer";
-import { RedirectText } from "./../../app/(auth)/_components/redirect-text";
+
 import { AppPath } from "@/path";
 import { authService } from "@/shared/http/factories/auth-factory";
 
 import { toast } from "sonner";
 import { redirect } from "next/navigation";
+import { RedirectText } from "../redirect-text";
 
 export function LoginForm() {
   const form = useForm<LoginValidationType>({

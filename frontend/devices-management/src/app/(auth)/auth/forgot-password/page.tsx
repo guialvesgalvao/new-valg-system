@@ -1,7 +1,7 @@
 import { AppPath } from "@/path";
 
 import { AuthTitle } from "../_components/auth-title";
-import { RedirectText } from "../_components/redirect-text";
+import { RedirectText } from "../../../../components/redirect-text";
 import { ForgotPasswordForm } from "@/components/forms/forgot-password-form";
 
 export default function ForgotPassword() {

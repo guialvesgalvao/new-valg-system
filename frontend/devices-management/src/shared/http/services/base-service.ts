@@ -20,7 +20,7 @@ export class BaseService<T extends BaseRepository> {
    * @returns Uma string contendo a mensagem de erro amigável.
    */
   protected getErrorMessage(error: unknown, defaultMessage: string): Error {
-    if (process.env.NODE_ENV === "development") {
+    if (process.env.NEXT_ENV === "development") {
       console.error("Erro capturado:", error);
     }
 

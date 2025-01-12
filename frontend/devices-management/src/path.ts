@@ -1,8 +1,10 @@
 export const AppPath = {
+  ROOT: "/",
+
   // Rotas de autenticação
-  Login: "/login",
-  Register: "/register",
-  ForgotPassword: "/forgot-password",
+  Login: "/auth/login",
+  Register: "/auth/register",
+  ForgotPassword: "/auth/forgot-password",
 
   // Rotas principais do dashboard
   Dashboard: "/dashboard",
