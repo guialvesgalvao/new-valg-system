@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import axios, { AxiosInstance } from "axios";
+import { AxiosInstance } from "axios";
 import ApiService from "./api-service";
 
 vi.mock("axios");
