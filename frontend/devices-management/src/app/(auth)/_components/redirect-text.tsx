@@ -1,11 +1,11 @@
 import { cn } from "@/lib/utils";
-import { AppPath } from "@/path";
+import { AppPathType } from "@/path";
 import Link from "next/link";
 
 interface IRedirectTextProps {
   className?: string;
   children: string;
-  href: AppPath;
+  href: AppPathType;
 }
 
 export function RedirectText(props: Readonly<IRedirectTextProps>) {

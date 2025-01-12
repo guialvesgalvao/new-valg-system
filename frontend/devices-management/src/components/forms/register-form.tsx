@@ -21,6 +21,10 @@ import {
 } from "@/shared/validations/register-validation";
 import { UserRoundPlus } from "lucide-react";
 import { FieldSpacer } from "./field-spacer";
+import { toast } from "sonner";
+import { authService } from "@/shared/http/factories/auth-factory";
+import { redirect } from "next/navigation";
+import { AppPath } from "@/path";
 
 export function RegisterForm() {
   const form = useForm<RegisterValidationType>({
@@ -36,7 +40,31 @@ export function RegisterForm() {
   const { isLoading, isSubmitting, isValid } = form.formState;
 
   async function onSubmit(data: RegisterValidationType) {
-    console.log(data);
+    try {
+      const { email, password, confirmPassword } =
+        registerValidation.parse(data);
+
+      toast.loading("Registering...", {
+        id: "register",
+        description: "Please wait while we register you.",
+      });
+
+      await authService.register(email, password, confirmPassword);
+
+      toast.success("Registered successfully!", {
+        id: "register",
+        description: "You are now registered, you will be redirected shortly.",
+      });
+
+      redirect(AppPath.Dashboard);
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error("Failed to register. Please try again.", {
+          id: "register",
+          description: error.message,
+        });
+      }
+    }
   }
 
   return (

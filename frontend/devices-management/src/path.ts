@@ -1,8 +1,13 @@
-export enum AppPath {
-  Login = "/login",
-  Register = "/register",
-  ForgotPassword = "/forgot-password",
+export const AppPath = {
+  // Rotas de autenticação
+  Login: "/login",
+  Register: "/register",
+  ForgotPassword: "/forgot-password",
 
-  Dashboard = "/dashboard",
-  Devices = "/devices",
-}
+  // Rotas principais do dashboard
+  Dashboard: "/dashboard",
+  Devices: "/devices",
+} as const;
+
+// Tipo inferido para garantir segurança ao usar as rotas
+export type AppPathType = (typeof AppPath)[keyof typeof AppPath];

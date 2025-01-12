@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { ThemeProvider } from "./providers/theme-provider";
+import { Toaster } from "sonner";
 
 interface IProvidersProps {
   children: React.ReactNode;
@@ -27,6 +28,7 @@ export default function Providers(props: Readonly<IProvidersProps>) {
       disableTransitionOnChange
     >
       {children}
+      <Toaster />
     </ThemeProvider>
   );
 }

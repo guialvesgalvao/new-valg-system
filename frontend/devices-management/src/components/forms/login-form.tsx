@@ -23,6 +23,10 @@ import { LogIn } from "lucide-react";
 import { FieldSpacer } from "./field-spacer";
 import { RedirectText } from "./../../app/(auth)/_components/redirect-text";
 import { AppPath } from "@/path";
+import { authService } from "@/shared/http/factories/auth-factory";
+
+import { toast } from "sonner";
+import { redirect } from "next/navigation";
 
 export function LoginForm() {
   const form = useForm<LoginValidationType>({
@@ -31,12 +35,36 @@ export function LoginForm() {
       password: "",
     },
     resolver: zodResolver(loginValidation),
+    mode: "all",
   });
 
   const { isLoading, isSubmitting, isValid } = form.formState;
 
   async function onSubmit(data: LoginValidationType) {
-    console.log(data);
+    try {
+      const { email, password } = loginValidation.parse(data);
+
+      toast.loading("Logging in...", {
+        id: "login",
+        description: "Please wait while we log you in.",
+      });
+
+      await authService.login(email, password);
+
+      toast.success("Logged in successfully!", {
+        id: "login",
+        description: "You are now logged in, you will be redirected shortly.",
+      });
+
+      redirect(AppPath.Dashboard);
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error("Failed to log in. Please try again.", {
+          id: "login",
+          description: error.message,
+        });
+      }
+    }
   }
 
   return (
@@ -103,7 +131,7 @@ export function LoginForm() {
           className="h-12 gap-x-2"
           variant="default"
           type="submit"
-          disabled={isSubmitting || isLoading || !isValid}
+          disabled={isSubmitting || !isValid}
         >
           <LogIn size={20} />
           Log in

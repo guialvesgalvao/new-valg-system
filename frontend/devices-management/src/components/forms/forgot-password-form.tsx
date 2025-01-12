@@ -20,6 +20,8 @@ import {
   forgotPasswordValidation,
   ForgotPasswordValidationType,
 } from "@/shared/validations/forgot-password-validation";
+import { toast } from "sonner";
+import { authService } from "@/shared/http/factories/auth-factory";
 
 export function ForgotPasswordForm() {
   const form = useForm<ForgotPasswordValidationType>({
@@ -27,12 +29,36 @@ export function ForgotPasswordForm() {
       email: "",
     },
     resolver: zodResolver(forgotPasswordValidation),
+    mode: "all",
   });
 
-  const { isLoading, isSubmitting, isValid } = form.formState;
+  const { isSubmitting, isValid } = form.formState;
 
   async function onSubmit(data: ForgotPasswordValidationType) {
-    console.log(data);
+    try {
+      const { email } = forgotPasswordValidation.parse(data);
+
+      toast.loading("Sending email...", {
+        id: "forgot-password",
+        description: "Please wait while we send you an email.",
+      });
+
+      await authService.forgotPassword(email);
+
+      toast.success("Email sent successfully!", {
+        id: "forgot-password",
+        description: "We have sent you an email, please check your inbox.",
+      });
+
+      form.reset();
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error("Failed to send email", {
+          id: "forgot-password",
+          description: error.message,
+        });
+      }
+    }
   }
 
   return (
@@ -68,7 +94,7 @@ export function ForgotPasswordForm() {
           className="h-12 gap-x-2"
           variant="default"
           type="submit"
-          disabled={isSubmitting || isLoading || !isValid}
+          disabled={isSubmitting || !isValid}
         >
           <Send size={20} />
           Reset Password

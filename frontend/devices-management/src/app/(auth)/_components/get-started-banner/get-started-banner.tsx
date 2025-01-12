@@ -45,7 +45,9 @@ export function GetStartedBanner(props: Readonly<IGetStartedBannerProps>) {
           <ModeToggle />
         </div>
 
-        <h1 className="text-muted dark:text-primary text-xl font-medium">Devices Management</h1>
+        <h1 className="text-muted dark:text-primary text-xl font-medium">
+          Devices Management
+        </h1>
       </div>
 
       <div className="w-full flex flex-col gap-y-10 z-10">
@@ -58,9 +60,7 @@ export function GetStartedBanner(props: Readonly<IGetStartedBannerProps>) {
           </h3>
         </div>
 
-        <div className="w-full">
-          <RenderOrdersPaths orders={sortedOrders} />
-        </div>
+        <RenderOrdersPaths orders={sortedOrders} />
       </div>
 
       <div className="w-full h-full absolute top-0 left-0 z-0">

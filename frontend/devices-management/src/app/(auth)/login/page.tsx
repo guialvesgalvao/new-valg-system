@@ -3,7 +3,6 @@ import { AppPath } from "@/path";
 import { LoginForm } from "@/components/forms/login-form";
 import { AuthTitle } from "../_components/auth-title";
 import { RedirectText } from "../_components/redirect-text";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 export default function LoginPage() {
   return (

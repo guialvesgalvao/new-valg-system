@@ -1,31 +1,28 @@
 import { z } from "zod";
+import { ERROR_VALIDATION_MESSAGES } from "./strings-validation";
+
+const emailSchema = z
+  .string({
+    required_error: ERROR_VALIDATION_MESSAGES.email.required,
+  })
+  .email(ERROR_VALIDATION_MESSAGES.email.invalid);
+
+const passwordSchema = z
+  .string({
+    required_error: ERROR_VALIDATION_MESSAGES.password.required,
+  })
+  .min(8, ERROR_VALIDATION_MESSAGES.password.minLength);
 
 export const registerValidation = z
   .object({
-    email: z
-      .string({
-        required_error: "Email Address is required",
-      })
-      .email("Invalid email address"),
-    password: z
-      .string({
-        required_error: "Password is required",
-      })
-      .min(8, "Password must be at least 8 characters"),
-    confirmPassword: z
-      .string({
-        required_error: "Confirm Password is required",
-      })
-      .min(8, "Password must be at least 8 characters"),
+    email: emailSchema,
+    password: passwordSchema,
+    confirmPassword: passwordSchema,
   })
-  .refine(
-    (data) => {
-      return data.confirmPassword === data.password;
-    },
-    {
-      message: "Passwords do not match",
-      path: ["confirmPassword"],
-    }
-  );
+  .refine((data) => data.confirmPassword === data.password, {
+    message: ERROR_VALIDATION_MESSAGES.confirmPassword.mismatch,
+    path: ["confirmPassword"],
+  });
 
+// Tipagem inferida do esquema de validação
 export type RegisterValidationType = z.infer<typeof registerValidation>;

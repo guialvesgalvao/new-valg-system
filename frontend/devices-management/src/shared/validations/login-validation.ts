@@ -1,16 +1,21 @@
 import { z } from "zod";
+import { ERROR_VALIDATION_MESSAGES } from "./strings-validation";
+
+const emailSchema = z
+  .string({
+    required_error: ERROR_VALIDATION_MESSAGES.email.required,
+  })
+  .email(ERROR_VALIDATION_MESSAGES.email.invalid);
+
+const passwordSchema = z
+  .string({
+    required_error: ERROR_VALIDATION_MESSAGES.password.required,
+  })
+  .min(8, ERROR_VALIDATION_MESSAGES.password.minLength);
 
 export const loginValidation = z.object({
-  email: z
-    .string({
-      required_error: "Email Address is required",
-    })
-    .email("Invalid email address"),
-  password: z
-    .string({
-      required_error: "Password is required",
-    })
-    .min(8, "Password must be at least 8 characters"),
+  email: emailSchema,
+  password: passwordSchema,
 });
 
 export type LoginValidationType = z.infer<typeof loginValidation>;

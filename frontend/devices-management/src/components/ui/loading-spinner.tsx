@@ -39,7 +39,11 @@ export interface SpinnerProps
   size?: VariantProps<typeof spinnerVariants>["size"] | number;
 }
 
-const LoadingSpinner = ({ className, variant, size = "default" }: SpinnerProps) => (
+const LoadingSpinner = ({
+  className,
+  variant,
+  size = "default",
+}: SpinnerProps) => (
   <div
     role="status"
     aria-label="Loading"
