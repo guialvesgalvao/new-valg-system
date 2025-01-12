@@ -1,3 +1,4 @@
+import { Logo } from "@/components/logo";
 import { GetStartedBanner } from "./_components/get-started-banner/get-started-banner";
 import { ModeToggle } from "./_components/theme-toogle";
 
@@ -7,7 +8,7 @@ interface ILayoutAuthProps {
 
 export default function LayoutAuth({ children }: Readonly<ILayoutAuthProps>) {
   return (
-    <div className="bg-background w-full h-screen flex flex-col md:flex-row items-center justify-start p-4">
+    <div className="bg-background w-full h-screen flex flex-col md:flex-row items-center justify-start p-6">
       <div className="hidden lg:block w-full h-full">
         <GetStartedBanner
           title="Get started with us"

@@ -36,12 +36,16 @@ export function GetStartedBanner(props: Readonly<IGetStartedBannerProps>) {
       dark:bg-[linear-gradient(to_right_bottom,#10412f,#0f3728,#0d2d21,#0b241a,#071b13)]
       w-full h-96 md:h-full flex flex-col items-start justify-between rounded-3xl shadow-lg p-10 relative overflow-hidden"
     >
-      <div className="w-full flex justify-between items-center z-10">
-        <div className="w-full flex items-start justify-start text-primary-foreground dark:text-primary">
-          <Logo />
+      <div className="w-full flex flex-col">
+        <div className="w-full flex justify-between items-center z-10">
+          <div className="w-full flex items-start justify-start text-primary-foreground dark:text-primary">
+            <Logo />
+          </div>
+
+          <ModeToggle />
         </div>
 
-        <ModeToggle />
+        <h1 className="text-muted dark:text-primary text-xl font-medium">Devices Management</h1>
       </div>
 
       <div className="w-full flex flex-col gap-y-10 z-10">
