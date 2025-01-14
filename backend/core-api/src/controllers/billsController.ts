@@ -1,30 +1,19 @@
 import { Request, Response } from "express";
-import pool from "../config/db";
 import { transformBillToText } from "../services/transformBillToText";
-import { IBill, IBillDBSchema } from "../shared/interfaces/IBill";
-import { billFormatter } from "../shared/formatters/billsFormatter";
+import { IBill } from "../shared/interfaces/IBill";
 import { transformTextInBill } from "../services/transformTextInBill";
 import { validateBill } from "../services/validateBill";
-import { getBillMetadataToUpdate } from "../services/getBillMetadataToUpdate";
 import { findBillIdWithOpenAI } from "../services/findBillIdWithOpenAI";
-import { validateQueryParams } from "../shared/utils/validateQueryParams";
+import { BillService } from "../services/BillService";
+import { BillRepository } from "../repositories/billRepository";
 
 async function getBills(req: Request, res: Response): Promise<void> {
   const { isOverdue, returnMode } = req.query;
+  const userId = res.locals.userId;
 
   try {
-    validateQueryParams(
-      { isOverdue: isOverdue as string, returnMode: returnMode as string },
-      {
-        isOverdue: (value) => value === "true" || value === undefined,
-        returnMode: (value) => value === "text" || value === undefined,
-      }
-    );
-
-    const SQLQuery = isOverdue === "true" ? "SELECT * FROM bills WHERE due_date < CURRENT_DATE" : "SELECT * FROM bills";
-
-    const [rows] = await pool.query(SQLQuery);
-    const bills = billFormatter(rows as IBillDBSchema[]);
+    const billService = new BillService(userId);
+    const bills = await billService.get(isOverdue === "true");
 
     if (returnMode !== "text") {
       res.status(200).json(bills);
@@ -32,14 +21,16 @@ async function getBills(req: Request, res: Response): Promise<void> {
     }
 
     const transformedBills = transformBillToText(bills);
+
     res.status(200).json(transformedBills);
   } catch (error) {
-    res.status(500).json({ error: (error as Error).message });
+    res.status(500).json({ error: "Não foi possível coletar as contas" });
   }
 }
 
 async function createBill(req: Request, res: Response) {
   const { dataType, data } = req.body;
+  const userId = res.locals.userId;
 
   try {
     if (!data || !dataType) {
@@ -47,30 +38,23 @@ async function createBill(req: Request, res: Response) {
       return;
     }
 
-    const bill = dataType === "text" ? await transformTextInBill(data) : data;
-
+    const bill: IBill = dataType === "text" ? await transformTextInBill(data) : data;
     const billValidator = validateBill(bill);
 
-    if (typeof billValidator == "string") {
+    if (billValidator) {
       res.status(400).json({ error: billValidator });
       return;
     }
 
-    const SQLQuery = `
-        INSERT INTO bills (name, amount, due_date, status, is_generated_by_recurrence, user)
-        VALUES (?, ?, ?, ?, ?, ?)
-      `;
+    const billRepository = new BillRepository(userId);
+    const createBill = await billRepository.create(bill);
+    
+    if (createBill) {
+      res.status(201).json({ message: "Conta criada com sucesso!" });
+      return;
+    }
 
-    await pool.query(SQLQuery, [
-      bill.name,
-      bill.amount,
-      bill.due_date,
-      bill.status || "",
-      bill.isRecurring ? 1 : 0,
-      "default_user",
-    ]);
-
-    res.status(201).json({ message: "Conta criada com sucesso!" });
+    res.status(500).json({ error: "Erro ao processar a conta informada" });
   } catch (error) {
     res.status(500).json({ error: "Erro ao processar a conta informada" });
   }
@@ -78,31 +62,30 @@ async function createBill(req: Request, res: Response) {
 
 async function updateBill(req: Request, res: Response) {
   const { data } = req.body;
+  const userId = res.locals.userId;
+  const billRepository = new BillRepository(userId);
+  const billService = new BillService(userId);
+
   try {
     if (!data.id) {
       res.status(400).json({ error: "É obrigatório utilizar informar o ID da conta." });
       return;
     }
-
-    const [existingBill] = await pool.query("SELECT * FROM bills WHERE id = ?", [data.id]);
-
-    if ((existingBill as IBill[]).length === 0) {
+    const checkBillExist = await billRepository.checkBillExist(data.id);
+    
+    if (!checkBillExist) {
       res.status(404).json({ error: "Conta não encontrada." });
       return;
     }
+    
+    const updateBill = await billService.updateBillMetadata(data, data.id);
 
-    const { fieldsToUpdate, metadataValues } = getBillMetadataToUpdate(data);
-
-    if (fieldsToUpdate.length === 0) {
-      res.status(400).json({ error: "Nenhum campo foi informado para atualização." });
+    if (updateBill) {
+      res.status(201).json({ message: "Conta atualizada com sucesso!" });
       return;
     }
 
-    const SQLUpdateQuery = `UPDATE bills SET ${fieldsToUpdate.join(", ")} WHERE id = ?`;
-
-    await pool.query(SQLUpdateQuery, [...metadataValues, data.id]);
-
-    res.status(201).json({ message: "Conta atualizada com sucesso!" });
+    res.status(500).json({ error: "Erro durante o processo de atualização da conta" });
   } catch (error) {
     res.status(500).json({ error: "Erro durante o processo de atualização da conta" });
   }
@@ -110,25 +93,32 @@ async function updateBill(req: Request, res: Response) {
 
 async function deleteBill(req: Request, res: Response) {
   const { id } = req.params;
-
-  if (!id) {
-    res.status(400).json({ error: "É necessário informar um ID da conta que será deletada" });
-    return;
-  }
+  const userId = res.locals.userId;
+  const billRepository = new BillRepository(userId);
 
   try {
-    const [existingBill] = await pool.query("SELECT * FROM bills WHERE id = ?", [id]);
+    const parsedId = parseInt(id);
+    
+    if (!parsedId) {
+      res.status(400).json({ error: "É necessário informar um ID da conta que será deletada" });
+      return;
+    }
+  
+    const checkBillExist = await billRepository.checkBillExist(parsedId);
 
-    if ((existingBill as IBill[]).length === 0) {
+    if (!checkBillExist) {
       res.status(404).json({ error: "Conta não encontrada." });
       return;
     }
 
-    const SQLQuery = `DELETE FROM bills WHERE id = ${id}`;
+    const deleteBill = await billRepository.delete(parsedId);
 
-    await pool.query(SQLQuery);
+    if (deleteBill) {
+      res.status(200).json({ message: "Conta deletada com sucesso" });
+      return;
+    }
 
-    res.status(200).json({ message: "Conta deletada com sucesso" });
+    res.status(500).json({ error: "Erro durante o processo de exclusão da conta" });
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error" });
   }
@@ -136,6 +126,7 @@ async function deleteBill(req: Request, res: Response) {
 
 async function findBillId(req: Request, res: Response) {
   const { data } = req.body;
+  const userId = res.locals.userId;
 
   if (!data || data.trim() === "") {
     res.status(400).json({ error: "É necessário informar o parâmetro data com o texto do usuário" });
@@ -143,7 +134,7 @@ async function findBillId(req: Request, res: Response) {
   }
 
   try {
-    const billId = await findBillIdWithOpenAI(data);
+    const billId = await findBillIdWithOpenAI(data, userId);
 
     res.status(200).json({ message: billId });
   } catch (error) {

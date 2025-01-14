@@ -3,6 +3,7 @@ export interface IBill {
   name: string;
   amount: number;
   dueDate: Date;
+  userId: number;
   status?: string;
   isRecurring?: boolean;
   modifiedAt?: string;
@@ -16,7 +17,7 @@ export interface IBillDBSchema {
   due_date: string;
   status:  string;
   is_generated_by_recurrence: number; 
-  user?:  string;
+  user_id:  number;
   modified_at: string;
   created_at: string;
 }
@@ -24,6 +25,6 @@ export interface IBillDBSchema {
 export interface IUnvalidatedBills {
   name?: string;
   amount?: number;
-  due_date?: Date;
+  dueDate?: Date;
   isRecurring?: boolean;
 }

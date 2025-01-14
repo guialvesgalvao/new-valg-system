@@ -2,13 +2,13 @@ export const promptToTransformTextInObject = `Você é um assistente de programa
 
 name: o nome da conta (ou algo relacionado).
 amount: o valor da conta (caso presente).
-due_date: a data de vencimento da conta (caso presente).
+dueDate: a data de vencimento da conta (caso presente).
 A estrutura do JSON deve ser:
 
 {
   "name": string,
   "amount": number,
-  "due_date": "YYYY-MM-DD"
+  "dueDate": "YYYY-MM-DD"
 }
 
 Se algum dos campos não for encontrado no texto, simplesmente não o inclua no JSON. Lembre-se, o JSON é a única coisa que você deve retornar, sem explicações ou outros textos. Eu irei executar JSON.parse() no seu retorno, então garanta que o formato do JSON esteja correto.`
