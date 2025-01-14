@@ -16,11 +16,13 @@ export class BillRepository {
   }
 
   async get(onlyOverdue: boolean): Promise<IBillDBSchema[]> {
-    const SQLQuery = "SELECT * FROM bills WHERE user_id = ?" + onlyOverdue ? " AND due_date < CURRENT_DATE" : "";
+      let SQLQuery = "SELECT * FROM bills WHERE user_id = ?"
 
-    const [rows] = await pool.query(SQLQuery, [this.userId]);
+      if(onlyOverdue) SQLQuery += " AND due_date < CURRENT_DATE";
 
-    return rows as IBillDBSchema[];
+      const [rows] = await pool.query(SQLQuery, [this.userId]);
+
+      return rows as IBillDBSchema[];
   }
 
   async checkBillExist(billId: number): Promise<boolean> {

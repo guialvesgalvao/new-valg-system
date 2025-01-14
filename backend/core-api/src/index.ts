@@ -13,6 +13,7 @@ const { JWT_LONG_SECRET } = enviromentVariableValidator()
 app.use(express.json());
 app.use("/bills", billsRouter);
 app.use("/recurring-bills", recurringBillsRouter);
+
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);
 });

@@ -5,7 +5,7 @@ import { transformTextInBill } from "../services/transformTextInBill";
 import { validateBill } from "../services/validateBill";
 import { findBillIdWithOpenAI } from "../services/findBillIdWithOpenAI";
 import { BillService } from "../services/BillService";
-import { BillRepository } from "../repositories/BillRepository";
+import { BillRepository } from "../repositories/billRepository";
 
 async function getBills(req: Request, res: Response): Promise<void> {
   const { isOverdue, returnMode } = req.query;
@@ -39,7 +39,6 @@ async function createBill(req: Request, res: Response) {
     }
 
     const bill: IBill = dataType === "text" ? await transformTextInBill(data) : data;
-
     const billValidator = validateBill(bill);
 
     if (billValidator) {
@@ -49,7 +48,7 @@ async function createBill(req: Request, res: Response) {
 
     const billRepository = new BillRepository(userId);
     const createBill = await billRepository.create(bill);
-
+    
     if (createBill) {
       res.status(201).json({ message: "Conta criada com sucesso!" });
       return;
@@ -73,12 +72,12 @@ async function updateBill(req: Request, res: Response) {
       return;
     }
     const checkBillExist = await billRepository.checkBillExist(data.id);
-
-    if (checkBillExist) {
+    
+    if (!checkBillExist) {
       res.status(404).json({ error: "Conta não encontrada." });
       return;
     }
-
+    
     const updateBill = await billService.updateBillMetadata(data, data.id);
 
     if (updateBill) {
@@ -99,14 +98,15 @@ async function deleteBill(req: Request, res: Response) {
 
   try {
     const parsedId = parseInt(id);
+    
     if (!parsedId) {
       res.status(400).json({ error: "É necessário informar um ID da conta que será deletada" });
       return;
     }
-
+  
     const checkBillExist = await billRepository.checkBillExist(parsedId);
 
-    if (checkBillExist) {
+    if (!checkBillExist) {
       res.status(404).json({ error: "Conta não encontrada." });
       return;
     }

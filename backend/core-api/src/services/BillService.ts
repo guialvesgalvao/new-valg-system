@@ -1,5 +1,5 @@
 import { billsFactory } from "../factories/billsFactory";
-import { BillRepository } from "../repositories/BillRepository";
+import { BillRepository } from "../repositories/billRepository";
 import { IBill } from "../shared/interfaces/IBill";
 import { getObjectMetadata } from "./getObjectMetadata";
 

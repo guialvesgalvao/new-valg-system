@@ -31,16 +31,18 @@ export class RecurringBillRepository {
         VALUES (?, ?, ?, ?, ?, ?)
       `;
 
-    const [result] = await pool.query<ResultSetHeader>(SQLQuery, [
-      data.name,
-      data.averageAmount,
-      data.dayOfDue,
-      data.endDate,
-      this.userId,
-      data.enabled
-    ]);
 
-    return result.affectedRows > 0;
+      const [result] = await pool.query<ResultSetHeader>(SQLQuery, [
+        data.name,
+        data.averageAmount,
+        data.dayOfDue,
+        data.endDate,
+        this.userId,
+        data.enabled
+      ]);
+
+      return result.affectedRows > 0;
+
   }
 
   async updateMetadata(
@@ -58,7 +60,7 @@ export class RecurringBillRepository {
       return false;
     }
   }
-  
+
   async delete(recurringBillId: number): Promise<boolean> {
     try {
       const SQLQuery = `DELETE FROM bill_recurrences WHERE id = ? AND user_id = ?`;

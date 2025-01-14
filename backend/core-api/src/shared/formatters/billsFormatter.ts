@@ -8,6 +8,7 @@ export function billFormatter(bills: Array<IBillDBSchema>): Array<IBill> {
             amount: bill.amount,
             dueDate: new Date(bill.due_date),
             status: bill.status,
+            userId: bill.user_id,
             isRecurring: !!bill.is_generated_by_recurrence,
             modifiedAt: bill.modified_at,
             createdAt: bill.created_at

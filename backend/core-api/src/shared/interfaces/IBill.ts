@@ -25,6 +25,6 @@ export interface IBillDBSchema {
 export interface IUnvalidatedBills {
   name?: string;
   amount?: number;
-  due_date?: Date;
+  dueDate?: Date;
   isRecurring?: boolean;
 }

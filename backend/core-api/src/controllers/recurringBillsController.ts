@@ -30,6 +30,7 @@ async function createRecurringBill(req: Request, res: Response) {
 
     if (createBill) {
       res.status(400).json({ error: createBill });
+      return
     }
 
     res.status(201).json({ message: "Conta recorrente criada com sucesso!" });
@@ -40,12 +41,12 @@ async function createRecurringBill(req: Request, res: Response) {
 
 async function updateRecurringBill(req: Request, res: Response) {
   const { data } = req.body;
-  const { id } = req.query;
+  const { id } = req.params;
   const userId = res.locals.userId;
   const service = new RecurringBillService(userId);
   const repository = new RecurringBillRepository(userId);
 
-  if (!parseInt(id as string)) {
+  if (!parseInt(id)) {
     res.status(400).json({ error: "Id para atualização não informado" });
     return;
   }
@@ -56,14 +57,14 @@ async function updateRecurringBill(req: Request, res: Response) {
   }
 
   try {
-    const checkBillExist = await repository.checkRecurringBillExist(parseInt(id as string));
+    const checkBillExist = await repository.checkRecurringBillExist(parseInt(id));
 
     if (!checkBillExist) {
       res.status(404).json({ error: "Conta recorrente não encontrada." });
       return;
     }
 
-    const updateBill = await service.updateRecurringBillMetadata(data, parseInt(id as string));
+    const updateBill = await service.updateRecurringBillMetadata(data, parseInt(id));
     if (updateBill) {
       res.status(201).json({ message: "Conta recorrente atualizada com sucesso!" });
       return;

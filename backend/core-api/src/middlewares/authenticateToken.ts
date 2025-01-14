@@ -4,6 +4,7 @@ import { SessionRepository } from "../repositories/SessionRepository";
 import { JWT_LONG_SECRET } from "..";
 
 export async function authenticateToken(req: Request, res: Response, next: NextFunction): Promise<void> {
+
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     res.status(401).json({ error: "Token não encontrado" });

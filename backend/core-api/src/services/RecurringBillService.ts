@@ -1,4 +1,4 @@
-import { recurringBillsFactory } from "../factories/recurringBillsFactory";
+import { recurringBillsFactory } from "../factories/recurringBillFactory";
 import { RecurringBillRepository } from "../repositories/RecurringBillRepository";
 import { IRecurringBill } from "../shared/interfaces/IRecurringBill";
 import { recurringBillValidator } from "../validators/recurringBillValidator";
@@ -24,6 +24,7 @@ export class RecurringBillService {
   async create(data: unknown): Promise<string | null> {
     try {
       const validator = recurringBillValidator(data);
+
       if (validator) return validator;
 
       const repository = new RecurringBillRepository(this.userId);
@@ -51,8 +52,9 @@ export class RecurringBillService {
       };
 
     try {
+      console.log('ola')
       const { fieldsToUpdate, metadataValues } = getObjectMetadata(data ,fieldMap);
-
+      console.log('ola1')
       const updateBill = await repository.updateMetadata(billId, fieldsToUpdate, metadataValues);
 
       return updateBill

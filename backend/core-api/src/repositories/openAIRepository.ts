@@ -23,10 +23,10 @@ export async function openAIRepository({ maxTokens, systemPrompt, userPrompt }: 
 
         const headers = {
             'Content-Type': 'application/json',
-            'api-key': process.env.AZURE_OPEN_AI_APIKEY,
+            'api-key': process.env.OPEN_AI_APIKEY,
         }
 
-        const response = await axios.post(process.env.AZURE_OPEN_AI_ENDPOINT ?? '', requestBody, { headers });
+        const response = await axios.post(process.env.OPEN_AI_ENDPOINT ?? '', requestBody, { headers });
         const res = JSON.parse(response.data.choices[0].message.content)
         return res
 
