@@ -1,8 +1,8 @@
-import { RowDataPacket } from "mysql2";
+import { ResultSetHeader, RowDataPacket } from "mysql2";
 import pool from "../config/db";
 import bcrypt from "bcrypt";
 
-interface CreatUser { 
+interface CreateUser {
   name: string;
   email: string;
   password: string;
@@ -10,18 +10,32 @@ interface CreatUser {
 }
 
 export class UserRepository {
-  async create({ name, email, password, celNumber }: CreatUser) {
+  async create({
+    name,
+    email,
+    password,
+    celNumber,
+  }: CreateUser): Promise<boolean> {
+    const saltRounds = 10;
 
-    try {
-      const SQLQuery = `INSERT INTO users (name, email, password, cel_number, role)
-            VALUES (?, ?, ?, ?, ?)`;
+    const encryptedPassword = await bcrypt.hash(password, saltRounds);
 
-      await pool.query(SQLQuery, [name, email, password, celNumber, "user"]);
-    } catch (error) {
-      throw new Error(
-        "Não foi possível realizar a criação do usuário no banco de dados"
-      );
+    const SQLQuery =
+      "INSERT INTO users (name, email, password, cel_number, role) VALUES (?, ?, ?, ?, ?)";
+
+    const [results] = await pool.query<ResultSetHeader>(SQLQuery, [
+      name,
+      email,
+      encryptedPassword,
+      celNumber,
+      "user",
+    ]);
+
+    if (results.affectedRows) {
+      return results.affectedRows > 0;
     }
+
+    return false;
   }
 
   async authentication(
@@ -42,5 +56,17 @@ export class UserRepository {
     if (!passwordMatch) return null;
 
     return user.id;
+  }
+
+  async getByEmail(email: string): Promise<boolean> {
+    const SQLQuery = "SELECT * FROM users WHERE email = ?";
+
+    const [rows] = await pool.query<RowDataPacket[]>(SQLQuery, [email]);
+
+    if (rows.length) {
+      return rows.length > 0;
+    }
+
+    return false;
   }
 }

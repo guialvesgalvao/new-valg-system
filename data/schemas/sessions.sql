@@ -1,16 +1,19 @@
-CREATE TABLE `sessions` (
-    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `user_id` INT UNSIGNED NOT NULL,
-    `acess_token` VARCHAR(255),
-    `refresh_token` VARCHAR(255),
-    `acess_token_expires_at` DATE DEFAULT NULL,
-    `refresh_token_expires_at` DATE NOT NULL,
-    `token_type` VARCHAR(255),
-    `modified_at` DATE,
-    `created_at` DATE,
-    `revoked` BOOLEAN DEFAULT FALSE,
+CREATE TABLE
+  `sessions` (
+    `id` int unsigned NOT NULL AUTO_INCREMENT,
+    `user_id` int unsigned NOT NULL,
+    `acess_token` varchar(255) DEFAULT NULL,
+    `refresh_token` varchar(255) DEFAULT NULL,
+    `acess_token_expires_at` datetime NOT NULL,
+    `refresh_token_expires_at` datetime DEFAULT NULL,
+    `token_type` varchar(255) DEFAULT NULL,
+    `modified_at` date DEFAULT NULL,
+    `created_at` date DEFAULT NULL,
+    `revoked` tinyint(1) DEFAULT '0',
+    `amazon_user_id` varchar(255) DEFAULT NULL,
+    `otp_code_expires_at` datetime DEFAULT NULL,
+    `otp_code` char(6) DEFAULT NULL,
     PRIMARY KEY (`id`, `user_id`),
-    CONSTRAINT `fk_sessions_users` 
-        FOREIGN KEY (`user_id`) 
-        REFERENCES `users` (`id`)
-) ENGINE = InnoDB;
+    KEY `fk_sessions_users` (`user_id`),
+    CONSTRAINT `fk_sessions_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+  ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci

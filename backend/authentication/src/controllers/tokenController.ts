@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { TokenType } from "../shared/enums/TokenType";
 import { Token } from "../models/Token";
-import { SessionRepository } from "../repositories/sessionRepository";
+import { SessionRepository } from "../repositories/SessionRepository";
 import { JWT_LONG_SECRET } from "..";
 
 async function createLongLifeToken(req: Request, res: Response): Promise<void> {
@@ -17,25 +17,37 @@ async function createLongLifeToken(req: Request, res: Response): Promise<void> {
       refreshToken,
       acessTokenExpiresDate,
       refreshTokenExpiresDate,
+      OTPCode,
+      OTPExpiresDate
     } = token.create(TokenType.LongLife);
 
-    await session.create({
+    const createRegisterInDB = await session.create({
       userId,
       tokenType: TokenType.LongLife,
       acessToken,
       refreshToken,
       acessTokenExpiresDate,
       refreshTokenExpiresDate,
+      OTPCode,
+      OTPExpiresDate
     });
 
-    res.status(201).json({ token: acessToken });
+    if(createRegisterInDB){
+      res.status(201).json({ acessToken, OTPCode, OTPExpiresDate });
+      return
+    }
+
+    res.status(500).json({ error: "Erro ao gerar o token" });
   } catch (error) {
     res.status(500).json({ error: "Erro ao gerar o token" });
   }
 }
 
 async function refreshToken(req: Request, res: Response): Promise<void> {
-  const { refreshToken } = req.body;
+  const reqBody = req.body;
+  const reqCokkie = req.cookies.refreshToken;
+
+  const refreshToken = reqCokkie ?? reqBody;
 
   if (!refreshToken) {
     res.status(400).json({ error: "Refresh Token não informado" });
@@ -45,25 +57,30 @@ async function refreshToken(req: Request, res: Response): Promise<void> {
   try {
     const sessions = new SessionRepository()
     const userSession = await sessions.getActiveSession(refreshToken)
-  
+
     if (!userSession) {
       res.status(401).json({ error: "Token inválido" });
       return;
     }
-    const decodedJWT = jwt.verify(refreshToken, JWT_LONG_SECRET);
+
+    const decodedJWT = jwt.verify(refreshToken, JWT_LONG_SECRET) as JwtPayload;
 
     if (!decodedJWT.userId) {
       res.status(401).json({ error: "Token inválido" });
       return;
     }
-
+    
     const token = new Token(decodedJWT.userId);
+    
+    const updateRefreshToken = await token.updateAcessToken(userSession.id);
+    
+    if(updateRefreshToken){
+      res.status(200).json({ token: updateRefreshToken });
+    }
 
-    const updateRefreshToken = token.updateAcessToken(userSession.id);
-
-    res.status(200).json({ token: updateRefreshToken });
+    res.status(500).json({ error: 'Não foi possível atualizar o token de acesso' });
   } catch (error) {
-    res.status(500).json({ error: (error as Error).message });
+    res.status(500).json({ error: 'Não foi possível atualizar o token de acesso' });
   }
 }
 

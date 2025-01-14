@@ -2,10 +2,11 @@ import { ResultSetHeader } from "mysql2";
 import pool from "../config/db";
 import { TokenType } from "../shared/enums/TokenType";
 import { generateDateForExpire } from "../shared/helpers/generateDateForExpire";
-import jwt, { DecodedToken } from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { SessionRepository } from "../repositories/SessionRepository";
-import { JWT_LONG_SECRET } from "..";
-
+import { JWT_LONG_SECRET, OTP_SECRET } from "..";
+import { DEFAULT_ACESS_TOKEN_DURATION, LOG_LIFE_ACESS_TOKEN_DURATION, OTP_DURATION, REFRESH_TOKEN_DURATION } from "../config/defaultConfigs";
+import { totp } from 'otplib'
 export class Token {
   userId: number;
 
@@ -18,26 +19,26 @@ export class Token {
 
   create(tokenType: TokenType) {
     const acessTokenExpiresDate =
-      tokenType === TokenType.LongLife ? null : generateDateForExpire(15);
+      tokenType === TokenType.LongLife
+        ? generateDateForExpire(LOG_LIFE_ACESS_TOKEN_DURATION)
+        : generateDateForExpire(DEFAULT_ACESS_TOKEN_DURATION);
+
     const refreshTokenExpiresDate =
       tokenType === TokenType.LongLife
-        ? generateDateForExpire(60 * 24 * 365 * 5)
-        : generateDateForExpire(60 * 24 * 7);
+        ? null
+        : generateDateForExpire(REFRESH_TOKEN_DURATION);
+
+    const OTPExpiresDate = generateDateForExpire(OTP_DURATION);
+    const OTPCode = parseInt(totp.generate(OTP_SECRET));
 
     const acessToken = jwt.sign(
-      { userId: this.userId },
-      JWT_LONG_SECRET,
-      {
-        expiresAt: acessTokenExpiresDate,
-      }
+      { userId: this.userId, tokenType: "acessToken" },
+      JWT_LONG_SECRET
     );
 
     const refreshToken = jwt.sign(
-      { userId: this.userId },
-      JWT_LONG_SECRET,
-      {
-        expiresAt: refreshTokenExpiresDate,
-      }
+      { userId: this.userId, tokenType: "refreshToken" },
+      JWT_LONG_SECRET
     );
 
     return {
@@ -45,6 +46,8 @@ export class Token {
       refreshToken,
       acessTokenExpiresDate,
       refreshTokenExpiresDate,
+      OTPCode,
+      OTPExpiresDate
     };
   }
 
@@ -52,13 +55,7 @@ export class Token {
     try {
       const acessTokenExpiresDate = generateDateForExpire(15);
 
-      const acessToken = jwt.sign(
-        { userId: this.userId },
-        JWT_LONG_SECRET,
-        {
-          expiresAt: acessTokenExpiresDate,
-        }
-      );
+      const acessToken = jwt.sign({ userId: this.userId }, JWT_LONG_SECRET);
 
       const SQLQuery = `
         UPDATE sessions
@@ -78,32 +75,31 @@ export class Token {
 
       return acessToken;
     } catch (error) {
-      throw new Error(
-        "Não foi possível criar o token no banco de dados");
+      throw new Error("Não foi possível criar o token no banco de dados");
     }
   }
 
   async validateAcessToken(acessToken: string): Promise<number | null> {
-    const session = new SessionRepository();
-    
-    const validate = jwt.verify(
-      acessToken,
-      JWT_LONG_SECRET,
-      async (err, decoded) => {
-        if (err) return null;
+    try {
+      const decoded = jwt.verify(acessToken, JWT_LONG_SECRET) as JwtPayload;
 
-        const { userId } = decoded as DecodedToken;
+      if (!decoded.userId) return null;
 
-        if (!userId) return null;
+      const session = new SessionRepository();
 
-        const validateToken = await session.getAcessToken(userId, acessToken)
+      console.log("token Recebido aqui 2", acessToken, this.userId);
 
-        if(!validateToken) return null
+      const validateToken = await session.getAcessToken(
+        decoded.userId,
+        acessToken
+      );
+      console.log("token Recebido aqui 2", validateToken);
 
-        return userId
-      }
-    );
+      if (!validateToken) return null;
 
-    return validate;
+      return decoded.userId;
+    } catch (error) {
+      return null;
+    }
   }
 }
