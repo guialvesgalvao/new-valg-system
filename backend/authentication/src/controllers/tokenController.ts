@@ -76,6 +76,7 @@ async function refreshToken(req: Request, res: Response): Promise<void> {
     
     if(updateRefreshToken){
       res.status(200).json({ token: updateRefreshToken });
+      return
     }
 
     res.status(500).json({ error: 'Não foi possível atualizar o token de acesso' });

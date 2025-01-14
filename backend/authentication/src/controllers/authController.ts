@@ -60,6 +60,7 @@ async function createUser(req: Request, res: Response) {
 
     if (validationParams) {
       res.status(400).json({ error: validationParams.error });
+      return;
     }
 
     const checkUserExist = await user.getByEmail(email);
