@@ -2,12 +2,14 @@ import express from "express";
 import { authRouter } from './routes/authRouter';
 import { tokenRouter } from "./routes/tokenRouter";
 import { enviromentVariableValidator } from "./validators/enviromentVariablesValidator"
+import cors from 'cors';
 
 const app = express();
 const PORT = 3000;
 
 const { JWT_LONG_SECRET, OTP_SECRET } = enviromentVariableValidator()
 
+app.use(cors());
 app.use(express.json());
 app.use('/auth', authRouter)
 app.use('/token', tokenRouter)
