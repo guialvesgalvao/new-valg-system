@@ -4,9 +4,9 @@ import pool from "../config/db";
 
 export class SessionRepository {
 
-  async getAcessToken(userId: number, acessToken: string) {
-    const SQLQuery = `SELECT * FROM sessions WHERE acess_token_expires_at > CURRENT_DATE AND user_id = ? AND acess_token = ? AND revoked = false`;
-    const [rows] = await pool.query<RowDataPacket[]>(SQLQuery, [userId, acessToken]);
+  async getAccessToken(userId: number, accessToken: string) {
+    const SQLQuery = `SELECT * FROM sessions WHERE access_token_expires_at > CURRENT_DATE AND user_id = ? AND access_token = ? AND revoked = false`;
+    const [rows] = await pool.query<RowDataPacket[]>(SQLQuery, [userId, accessToken]);
 
     if (rows.length > 0) {
       return rows[0] as ISession;

@@ -2,9 +2,9 @@ CREATE TABLE
   `sessions` (
     `id` int unsigned NOT NULL AUTO_INCREMENT,
     `user_id` int unsigned NOT NULL,
-    `acess_token` varchar(255) DEFAULT NULL,
+    `access_token` varchar(255) DEFAULT NULL,
     `refresh_token` varchar(255) DEFAULT NULL,
-    `acess_token_expires_at` datetime NOT NULL,
+    `access_token_expires_at` datetime NOT NULL,
     `refresh_token_expires_at` datetime DEFAULT NULL,
     `token_type` varchar(255) DEFAULT NULL,
     `modified_at` date DEFAULT NULL,

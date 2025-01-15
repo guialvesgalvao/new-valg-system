@@ -25,9 +25,9 @@ async function loginUser(req: Request, res: Response): Promise<void> {
 
     const token = new Token(userId);
 
-    const { acessToken, refreshToken, acessTokenExpiresDate, refreshTokenExpiresDate, OTPCode, OTPExpiresDate } = token.create(TokenType.Default);
+    const { accessToken, refreshToken, accessTokenExpiresDate, refreshTokenExpiresDate, OTPCode, OTPExpiresDate } = token.create(TokenType.Default);
 
-    const sucessOnLogin = await session.create({ userId, tokenType: TokenType.Default, acessToken, refreshToken, acessTokenExpiresDate, refreshTokenExpiresDate, OTPCode, OTPExpiresDate })
+    const sucessOnLogin = await session.create({ userId, tokenType: TokenType.Default, accessToken, refreshToken, accessTokenExpiresDate, refreshTokenExpiresDate, OTPCode, OTPExpiresDate })
     
     if(sucessOnLogin){
       res.cookie('refreshToken', refreshToken, {
@@ -36,7 +36,7 @@ async function loginUser(req: Request, res: Response): Promise<void> {
         sameSite: 'strict',
         maxAge: 7 * 24 * 60 * 60 * 1000
       });
-      res.status(200).json({ acessToken, refreshToken });
+      res.status(200).json({ accessToken, refreshToken });
       return
     }
 
@@ -105,7 +105,7 @@ async function updateAmazonUserId(req: Request, res: Response){
     const updateAmazonUserId = await session.updateAmazonUserId(validSession.sessionId, amazonUserId)
 
     if(updateAmazonUserId){
-      res.status(200).json({ acessToken: validSession.acessToken })
+      res.status(200).json({ accessToken: validSession.accessToken })
       return
     }
 
@@ -128,7 +128,7 @@ async function getLongLifeTokenByAmazonUserId(req: Request, res: Response){
     const getLongLifeTokenByAmazonUserId = await session.getLongLifeTokenByAmazonUserId(amazonUserId)
 
     if(getLongLifeTokenByAmazonUserId){
-      res.status(200).json({ acessToken: getLongLifeTokenByAmazonUserId})
+      res.status(200).json({ accessToken: getLongLifeTokenByAmazonUserId})
       return
     }
 

@@ -6,9 +6,9 @@ import { ISession } from "../interfaces/ISession";
 interface CreateTokenRegisterInDBProps {
   userId: number;
   tokenType: TokenType;
-  acessToken: string;
+  accessToken: string;
   refreshToken: string;
-  acessTokenExpiresDate: Date;
+  accessTokenExpiresDate: Date;
   refreshTokenExpiresDate: Date | null;
   OTPCode: number;
   OTPExpiresDate: Date;
@@ -18,21 +18,21 @@ export class SessionRepository {
   async create({
     userId,
     tokenType,
-    acessToken,
-    acessTokenExpiresDate,
+    accessToken,
+    accessTokenExpiresDate,
     refreshToken,
     refreshTokenExpiresDate,
     OTPCode,
     OTPExpiresDate,
   }: CreateTokenRegisterInDBProps): Promise<boolean> {
     const SQLQuery =
-      "INSERT INTO sessions (user_id, acess_token, refresh_token, acess_token_expires_at,  refresh_token_expires_at, token_type, otp_code, otp_code_expires_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+      "INSERT INTO sessions (user_id, access_token, refresh_token, access_token_expires_at,  refresh_token_expires_at, token_type, otp_code, otp_code_expires_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
     const [results] = await pool.query<ResultSetHeader>(SQLQuery, [
       userId,
-      acessToken,
+      accessToken,
       refreshToken,
-      acessTokenExpiresDate,
+      accessTokenExpiresDate,
       refreshTokenExpiresDate,
       tokenType,
       OTPCode,
@@ -59,15 +59,15 @@ export class SessionRepository {
     return null;
   }
 
-  async getAcessToken(userId: number, acessToken: string) {
+  async getAccessToken(userId: number, accessToken: string) {
     const dateNow = new Date();
     const SQLQuery =
-      "SELECT * FROM sessions WHERE acess_token_expires_at > ? AND user_id = ? AND acess_token = ? AND revoked = false";
+      "SELECT * FROM sessions WHERE access_token_expires_at > ? AND user_id = ? AND access_token = ? AND revoked = false";
 
     const [rows] = await pool.query<RowDataPacket[]>(SQLQuery, [
       dateNow,
       userId,
-      acessToken,
+      accessToken,
     ]);
 
     if (rows.length > 0) {
@@ -89,8 +89,8 @@ export class SessionRepository {
         dateNow
       ]);
       
-      if (rows.length > 0 && rows[0].acess_token && rows[0].id) {
-        return { acessToken: rows[0].acess_token, sessionId: rows[0].id };
+      if (rows.length > 0 && rows[0].access_token && rows[0].id) {
+        return { accessToken: rows[0].access_token, sessionId: rows[0].id };
       }
       
       return null;
@@ -125,8 +125,8 @@ export class SessionRepository {
         TokenType.LongLife,
       ]);
 
-      if (rows.length > 0 && rows[0].acess_token) {
-        return rows[0].acess_token;
+      if (rows.length > 0 && rows[0].access_token) {
+        return rows[0].access_token;
       }
 
       return null;
