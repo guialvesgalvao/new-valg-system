@@ -29,6 +29,7 @@ import { toast } from "sonner";
 import { redirect } from "next/navigation";
 import { RedirectText } from "../redirect-text";
 import { motion } from "framer-motion";
+import { FieldRowWrapper } from "./field-row-wrapper";
 
 export function LoginForm() {
   const form = useForm<LoginValidationType>({
@@ -51,7 +52,7 @@ export function LoginForm() {
         description: "Please wait while we log you in.",
       });
 
-      await authService.login(email, password);
+      await authService.login({ email, password });
 
       toast.success("Logged in successfully!", {
         id: "login",
@@ -84,7 +85,7 @@ export function LoginForm() {
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <div className="flex items-center justify-between">
+                <FieldRowWrapper>
                   <FormLabel>Email Address</FormLabel>
 
                   <RedirectText
@@ -93,7 +94,7 @@ export function LoginForm() {
                   >
                     Forgot password?
                   </RedirectText>
-                </div>
+                </FieldRowWrapper>
                 <FormControl>
                   <Input
                     {...field}

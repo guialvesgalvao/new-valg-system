@@ -11,7 +11,7 @@ const passwordSchema = z
   .string({
     required_error: ERROR_VALIDATION_MESSAGES.password.required,
   })
-  .min(8, ERROR_VALIDATION_MESSAGES.password.minLength);
+  .min(2, ERROR_VALIDATION_MESSAGES.password.minLength);
 
 export const loginValidation = z.object({
   email: emailSchema,

@@ -1,5 +1,17 @@
 import { z } from "zod";
 import { ERROR_VALIDATION_MESSAGES } from "./strings-validation";
+import { PHONE_REGEX } from "./validations-const";
+
+const nameSchema = z
+  .string({
+    required_error: ERROR_VALIDATION_MESSAGES.name.required,
+  })
+  .min(2, ERROR_VALIDATION_MESSAGES.name.minLength);
+
+const phoneSchema = z
+  .string()
+  .regex(PHONE_REGEX, ERROR_VALIDATION_MESSAGES.phone.invalid)
+  .optional();
 
 const emailSchema = z
   .string({
@@ -15,6 +27,8 @@ const passwordSchema = z
 
 export const registerValidation = z
   .object({
+    name: nameSchema,
+    phone: phoneSchema,
     email: emailSchema,
     password: passwordSchema,
     confirmPassword: passwordSchema,

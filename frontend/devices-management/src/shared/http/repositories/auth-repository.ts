@@ -1,7 +1,21 @@
 import BaseRepository from "./base-repository";
 
+export interface RegisterRepositoryParams {
+  name: string;
+  phone?: string;
+  email: string;
+  password: string;
+}
+
+export interface LoginRepositoryParams {
+  email: string;
+  password: string;
+}
+
 class AuthRepository extends BaseRepository {
-  async login<T>(email: string, password: string): Promise<T> {
+  async login<T>(data: LoginRepositoryParams): Promise<T> {
+    const { email, password } = data;
+
     try {
       return await this.api.post<T>("/login", { email, password });
     } catch (error) {
@@ -9,9 +23,13 @@ class AuthRepository extends BaseRepository {
     }
   }
 
-  async register<T>(email: string, password: string): Promise<T> {
+  async register<T>(data: RegisterRepositoryParams): Promise<T> {
+    const { name, phone, email, password } = data;
+
     try {
       return await this.api.post<T>("/register", {
+        name,
+        celNumber: phone,
         email,
         password,
       });

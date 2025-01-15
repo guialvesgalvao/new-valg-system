@@ -1,5 +1,13 @@
-import { AuthRepository } from "../repositories/auth-repository";
+import {
+  AuthRepository,
+  RegisterRepositoryParams,
+  LoginRepositoryParams,
+} from "../repositories/auth-repository";
 import { BaseService } from "./base-service";
+
+interface RegisterServiceParams extends RegisterRepositoryParams {
+  confirmPassword: string;
+}
 
 class AuthService extends BaseService<AuthRepository> {
   /**
@@ -8,12 +16,14 @@ class AuthService extends BaseService<AuthRepository> {
    * @param password - Senha do usuário.
    * @returns Dados do usuário autenticado.
    */
-  async login(email: string, password: string) {
+  async login(data: LoginRepositoryParams) {
+    const { email, password } = data;
+
     try {
       this._validateEmail(email);
       this._validatePassword(password);
 
-      return await this.repository.login(email, password);
+      return await this.repository.login({ email, password });
     } catch (error) {
       throw this.getErrorMessage(error, "Login failed");
     }
@@ -26,13 +36,15 @@ class AuthService extends BaseService<AuthRepository> {
    * @param confirmPassword - Confirmação da senha.
    * @returns Dados do usuário registrado.
    */
-  async register(email: string, password: string, confirmPassword: string) {
+  async register(data: RegisterServiceParams) {
+    const { email, password, confirmPassword } = data;
+
     try {
       this._validateEmail(email);
       this._validatePassword(password);
       this._validatePasswordMatch(password, confirmPassword);
 
-      return await this.repository.register(email, password);
+      return await this.repository.register(data);
     } catch (error) {
       throw this.getErrorMessage(error, "Registration failed");
     }
@@ -70,6 +82,7 @@ class AuthService extends BaseService<AuthRepository> {
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     if (!emailRegex.test(email)) {
       throw new Error("Invalid email format");
     }
@@ -78,10 +91,6 @@ class AuthService extends BaseService<AuthRepository> {
   private _validatePassword(password: string): void {
     if (!password) {
       throw new Error("Password is required");
-    }
-
-    if (password.length < 8) {
-      throw new Error("Password must be at least 8 characters long");
     }
   }
 

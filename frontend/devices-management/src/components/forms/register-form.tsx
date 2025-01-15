@@ -26,10 +26,13 @@ import { authService } from "@/shared/http/factories/auth-factory";
 import { redirect } from "next/navigation";
 import { AppPath } from "@/path";
 import { motion } from "framer-motion";
+import { PhoneInput } from "../ui/phone-input";
 
 export function RegisterForm() {
   const form = useForm<RegisterValidationType>({
     defaultValues: {
+      name: "",
+      phone: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -42,7 +45,7 @@ export function RegisterForm() {
 
   async function onSubmit(data: RegisterValidationType) {
     try {
-      const { email, password, confirmPassword } =
+      const { name, phone, email, password, confirmPassword } =
         registerValidation.parse(data);
 
       toast.loading("Registering...", {
@@ -50,7 +53,13 @@ export function RegisterForm() {
         description: "Please wait while we register you.",
       });
 
-      await authService.register(email, password, confirmPassword);
+      await authService.register({
+        name,
+        phone,
+        email,
+        password,
+        confirmPassword,
+      });
 
       toast.success("Registered successfully!", {
         id: "register",
@@ -79,11 +88,56 @@ export function RegisterForm() {
       >
         <FieldSpacer>
           <FormField
+            name="name"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel required>Name</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    className="w-full h-10 md:h-12"
+                    type="text"
+                    placeholder="Enter your name"
+                    value={field.value ?? ""}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            name="phone"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Phone Number</FormLabel>
+                <FormControl>
+                  <PhoneInput
+                    {...field}
+                    className="w-full h-10 md:h-12"
+                    placeholder="Enter your phone number"
+                    value={field.value ?? ""}
+                    maxLength={15}
+                    defaultCountry="BR"
+                    onChange={(phone) => {
+                      console.log({ phone });
+                      field.onChange(phone);
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
             name="email"
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email Address</FormLabel>
+                <FormLabel required>Email Address</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
@@ -106,7 +160,7 @@ export function RegisterForm() {
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel required>Password</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
@@ -129,7 +183,7 @@ export function RegisterForm() {
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Confirm Password</FormLabel>
+                <FormLabel required>Confirm Password</FormLabel>
                 <FormControl>
                   <Input
                     {...field}

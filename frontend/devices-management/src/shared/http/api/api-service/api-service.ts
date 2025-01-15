@@ -1,27 +1,16 @@
 import {
   AxiosInstance,
-  AxiosInterceptorManager,
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from "axios";
-
-type InterceptorFunction<T> = {
-  onFulfilled: (value: T) => T | Promise<T>;
-  onRejected: (error: any) => any;
-};
-
-export type CustomAxiosInterceptorsParams = {
-  request?: InterceptorFunction<InternalAxiosRequestConfig>;
-  response?: InterceptorFunction<AxiosResponse>;
-};
+import ApiInterceptors, {
+  CustomAxiosInterceptorsParams,
+} from "../api-interceptors/api-interceptors";
 
 class ApiService {
   private readonly _api: AxiosInstance;
 
-  constructor(
-    api: AxiosInstance,
-    interceptors?: CustomAxiosInterceptorsParams
-  ) {
+  constructor(api: AxiosInstance, interceptors?: ApiInterceptors) {
     if (!api) {
       throw new Error("A instância do Axios não foi fornecida.");
     }
@@ -37,17 +26,12 @@ class ApiService {
     this.patch = this.patch.bind(this);
     this.delete = this.delete.bind(this);
 
-    const { request, response } = interceptors ?? {};
-
-    if (request || response) {
-      this._setupInterceptors(request, response);
-    }
+    this._setupInterceptors(interceptors);
   }
 
-  private _setupInterceptors(
-    request?: InterceptorFunction<InternalAxiosRequestConfig>,
-    response?: InterceptorFunction<AxiosResponse>
-  ): void {
+  private _setupInterceptors(interceptors: ApiInterceptors | undefined): void {
+    const { request, response } = interceptors ?? {};
+
     if (request) {
       this._api.interceptors.request.use(
         request.onFulfilled,
