@@ -10,7 +10,9 @@ const PORT = 3000;
 logger.info('Data processed successfully', PORT)
 const { JWT_LONG_SECRET } = enviromentVariableValidator()
 
-app.use(cors())
+app.use(cors({
+  origin: '*'
+}))
 app.use(express.json());
 app.use("/bills", billsRouter);
 app.use("/recurring-bills", recurringBillsRouter);

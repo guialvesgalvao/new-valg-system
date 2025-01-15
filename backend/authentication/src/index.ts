@@ -9,7 +9,9 @@ const PORT = 3000;
 
 const { JWT_LONG_SECRET, OTP_SECRET } = enviromentVariableValidator()
 
-app.use(cors());
+app.use(cors({
+  origin: '*'
+}))
 app.use(express.json());
 app.use('/auth', authRouter)
 app.use('/token', tokenRouter)
