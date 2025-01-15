@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import ApiService from "../api/api-service";
+import ApiService from "../api/api-service/api-service";
 
 import { AxiosError } from "axios";
 import BaseRepository from "./base-repository";

@@ -1,5 +1,5 @@
 import { AxiosError } from "axios";
-import ApiService from "../api/api-service";
+import ApiService from "../api/api-service/api-service";
 
 class BaseRepository {
   protected readonly api: ApiService;

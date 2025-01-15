@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import axios, { AxiosInstance } from "axios";
-import apiInstance from "./api-instance";
+import ApiInstance from "./api-instance";
 
 vi.mock("axios");
 
@@ -25,27 +25,27 @@ describe("apiInstance", () => {
   });
 
   it("should create an Axios instance", () => {
-    const instance = apiInstance();
-    expect(instance).toHaveProperty("defaults");
+    const api = new ApiInstance(baseURL);
+    expect(api.instance).toHaveProperty("defaults");
   });
 
   it("should have the correct baseURL", () => {
-    const instance = apiInstance();
-    expect(instance.defaults.baseURL).toBe(baseURL);
+    const api = new ApiInstance(baseURL);
+    expect(api.instance.defaults.baseURL).toBe(baseURL);
   });
 
   it("should have withCredentials set to true", () => {
-    const instance = apiInstance();
-    expect(instance.defaults.withCredentials).toBe(true);
+    const api = new ApiInstance(baseURL);
+    expect(api.instance.defaults.withCredentials).toBe(true);
   });
 
   it("should have a timeout of 5000", () => {
-    const instance = apiInstance();
-    expect(instance.defaults.timeout).toBe(5000);
+    const api = new ApiInstance(baseURL);
+    expect(api.instance.defaults.timeout).toBe(5000);
   });
 
   it("should call axios.create with the correct configuration", () => {
-    apiInstance();
+    new ApiInstance(baseURL);
     expect(axios.create).toHaveBeenCalledWith({
       baseURL,
       withCredentials: true,

@@ -3,7 +3,7 @@ import BaseRepository from "./base-repository";
 class AuthRepository extends BaseRepository {
   async login<T>(email: string, password: string): Promise<T> {
     try {
-      return await this.api.post<T>("/auth/login", { email, password });
+      return await this.api.post<T>("/login", { email, password });
     } catch (error) {
       throw this.createErrorMessage(error, "Erro ao realizar login.");
     }
@@ -11,7 +11,7 @@ class AuthRepository extends BaseRepository {
 
   async register<T>(email: string, password: string): Promise<T> {
     try {
-      return await this.api.post<T>("/auth/register", {
+      return await this.api.post<T>("/register", {
         email,
         password,
       });
@@ -22,7 +22,7 @@ class AuthRepository extends BaseRepository {
 
   async logout(): Promise<void> {
     try {
-      return await this.api.post("/auth/logout");
+      return await this.api.post("/logout");
     } catch (error) {
       throw this.createErrorMessage(error, "Erro ao realizar logout.");
     }
@@ -30,7 +30,7 @@ class AuthRepository extends BaseRepository {
 
   async forgotPassword(email: string): Promise<void> {
     try {
-      return await this.api.post("/auth/forgot-password", { email });
+      return await this.api.post("/forgot-password", { email });
     } catch (error) {
       throw this.createErrorMessage(
         error,
@@ -41,7 +41,7 @@ class AuthRepository extends BaseRepository {
 
   async refreshToken(): Promise<void> {
     try {
-      await this.api.post("/auth/refresh-token");
+      await this.api.post("/refresh-token");
     } catch (error) {
       throw this.createErrorMessage(error, "Erro ao atualizar o token.");
     }
@@ -49,7 +49,7 @@ class AuthRepository extends BaseRepository {
 
   async getLongLiveToken(): Promise<void> {
     try {
-      return await this.api.post("/auth/long-live-token");
+      return await this.api.post("/long-live-token");
     } catch (error) {
       throw this.createErrorMessage(
         error,
