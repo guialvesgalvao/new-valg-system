@@ -1,11 +1,5 @@
-import {
-  AxiosInstance,
-  AxiosResponse,
-  InternalAxiosRequestConfig,
-} from "axios";
-import ApiInterceptors, {
-  CustomAxiosInterceptorsParams,
-} from "../api-interceptors/api-interceptors";
+import { AxiosInstance } from "axios";
+import ApiInterceptors from "../api-interceptors/api-interceptors";
 
 class ApiService {
   private readonly _api: AxiosInstance;
