@@ -11,14 +11,14 @@ export async function authenticateToken(req: Request, res: Response, next: NextF
     return;
   }
 
-  const [bearer, acessToken] = authHeader.split(" ");
+  const [bearer, accessToken] = authHeader.split(" ");
 
-  if (bearer !== "Bearer" || !acessToken) {
+  if (bearer !== "Bearer" || !accessToken) {
     res.status(401).json({ error: "Token inválido" });
     return;
   }
 
-  const userId = await validateAccessToken(acessToken);
+  const userId = await validateAccessToken(accessToken);
 
   if (!userId) {
     res.status(401).json({ error: "Token inválido" });
@@ -40,7 +40,7 @@ async function validateAccessToken(accessToken: string): Promise<number | null> 
 
     if (!userId) return null;
 
-    const validateToken = await session.getAcessToken(userId, accessToken);
+    const validateToken = await session.getAccessToken(userId, accessToken);
 
     if (!validateToken) return null;
 

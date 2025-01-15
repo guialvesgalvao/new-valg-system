@@ -13,9 +13,9 @@ async function createLongLifeToken(req: Request, res: Response): Promise<void> {
     const session = new SessionRepository();
 
     const {
-      acessToken,
+      accessToken,
       refreshToken,
-      acessTokenExpiresDate,
+      accessTokenExpiresDate,
       refreshTokenExpiresDate,
       OTPCode,
       OTPExpiresDate
@@ -24,16 +24,16 @@ async function createLongLifeToken(req: Request, res: Response): Promise<void> {
     const createRegisterInDB = await session.create({
       userId,
       tokenType: TokenType.LongLife,
-      acessToken,
+      accessToken,
       refreshToken,
-      acessTokenExpiresDate,
+      accessTokenExpiresDate,
       refreshTokenExpiresDate,
       OTPCode,
       OTPExpiresDate
     });
 
     if(createRegisterInDB){
-      res.status(201).json({ acessToken, OTPCode, OTPExpiresDate });
+      res.status(201).json({ accessToken, OTPCode, OTPExpiresDate });
       return
     }
 
@@ -72,16 +72,16 @@ async function refreshToken(req: Request, res: Response): Promise<void> {
     
     const token = new Token(decodedJWT.userId);
     
-    const updateRefreshToken = await token.updateAcessToken(userSession.id);
+    const updateRefreshToken = await token.updateAccessToken(userSession.id);
     
     if(updateRefreshToken){
       res.status(200).json({ token: updateRefreshToken });
       return
     }
 
-    res.status(500).json({ error: 'Não foi possível atualizar o token de acesso' });
+    res.status(500).json({ error: 'Não foi possível atualizar o token de accesso' });
   } catch (error) {
-    res.status(500).json({ error: 'Não foi possível atualizar o token de acesso' });
+    res.status(500).json({ error: 'Não foi possível atualizar o token de accesso' });
   }
 }
 

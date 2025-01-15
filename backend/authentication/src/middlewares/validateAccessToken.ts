@@ -2,22 +2,22 @@ import { Request, Response, NextFunction } from 'express';
 import { Token } from "../models/Token";
 
 
-export async function validateAcessToken(req: Request, res: Response, next: NextFunction) {
+export async function validateAccessToken(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     res.status(401).json({ error: 'Token não encontrado' });
     return 
   }
   
-  const [bearer, acessToken] = authHeader.split(' ');
+  const [bearer, accessToken] = authHeader.split(' ');
   
-  if (bearer !== 'Bearer' || !acessToken) {
+  if (bearer !== 'Bearer' || !accessToken) {
     res.status(401).json({ error: 'Token inválido' });
     return 
   }
-  console.log('Token Recebido', acessToken)
+  console.log('Token Recebido', accessToken)
   const session = new Token(0);
-  const userId = await session.validateAcessToken(acessToken)
+  const userId = await session.validateAccessToken(accessToken)
 
   if(!userId) {
     res.status(401).json({ error: "Credenciais inválidas"})

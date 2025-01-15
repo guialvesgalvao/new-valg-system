@@ -1,4 +1,4 @@
-export const DEFAULT_ACESS_TOKEN_DURATION = 15;
-export const LOG_LIFE_ACESS_TOKEN_DURATION = 60 * 24 * 365 * 5;
+export const DEFAULT_ACCESS_TOKEN_DURATION = 15;
+export const LOG_LIFE_ACCESS_TOKEN_DURATION = 60 * 24 * 365 * 5;
 export const REFRESH_TOKEN_DURATION = 60 * 24 * 7;
 export const OTP_DURATION = 15;
