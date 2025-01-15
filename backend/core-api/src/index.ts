@@ -13,6 +13,13 @@ const { JWT_LONG_SECRET } = enviromentVariableValidator()
 app.use(cors({
   origin: '*'
 }))
+
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*'); // Permitir qualquer origem
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  next();
+});
 app.use(express.json());
 app.use("/bills", billsRouter);
 app.use("/recurring-bills", recurringBillsRouter);
