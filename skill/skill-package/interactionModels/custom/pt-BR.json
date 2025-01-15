@@ -36,36 +36,62 @@
               "analisar contas",
               "ver contas"
           ]
-      },
-      {
-          "name": "createBill",
+        },
+        {
+            "name": "createBill",
+            "slots": [
+                {
+                    "name": "bill",
+                    "type": "AMAZON.SearchQuery"
+                }
+            ],
+            "samples": [
+                "criar conta",
+                "criar conta {bill}"
+            ]
+        },
+        {
+            "name": "updateBill",
+            "slots": [
+                {
+                    "name": "bill",
+                    "type": "AMAZON.SearchQuery"
+                }
+            ],
+            "samples": [
+                "pagar conta {bill}"
+            ]
+        },
+        {
+          "name": "confirmUpdateBill",
+          
+          "samples": [
+              "sim"
+          ]
+        },
+        {
+          "name": "authenticateAccount",
           "slots": [
               {
-                  "name": "bill",
+                  "name": "otp",
                   "type": "AMAZON.SearchQuery"
               }
           ],
           "samples": [
-              "criar conta",
-              "criar conta {bill}"
+              "autenticar",
+              "OTP {otp}",
+              "autenticar {otp}"
           ]
-      },
-      {
-          "name": "updateBill",
-          "slots": [
-              {
-                  "name": "bill",
-                  "type": "AMAZON.SearchQuery"
-              }
-          ],
+        },
+        {
+          "name": "infoAccount",
           "samples": [
-              "sim",
-              "não",
-              "confirmar",
-              "pagar conta {bill}"
+              "informações da conta",
+              "informaçoes da minha conta",
+              "informações"
           ]
-      }
-      ],
+        }
+    ],
       "types": [],
       "invocationName": "central de contas"
     }

@@ -1,234 +1,174 @@
 const https = require('https');
 const http = require('http');
+const { hostname } = require('os');
 
-// Função para obter o cliente HTTP correto baseado no protocolo (https/http)
-const getClient = () => {
-  // Assumindo que estamos lidando com um protocolo HTTPS (como exemplo)
-  return "https".startsWith('https') ? https : http;
+// Constante para o hostname
+const HOSTNAME = 'new-valg-system-production.up.railway.app';
+
+/**
+ * Seleciona o cliente HTTP adequado com base no protocolo da URL.
+ * @param {string} protocol - O protocolo da URL (http ou https).
+ * @returns {http | https} O cliente HTTP correspondente.
+ */
+const getClient = (protocol) => (protocol === 'https' ? https : http);
+
+/**
+ * Faz uma requisição HTTP genérica.
+ * @param {Object} options - As opções da requisição.
+ * @param {Object} [data] - O corpo da requisição (caso aplicável).
+ * @returns {Promise<string>} A resposta do servidor.
+ */
+const makeRequest = async (options, data = null) => {
+  const client = getClient(options.protocol || 'https');
+
+  return new Promise((resolve, reject) => {
+    const request = client.request(options, (response) => {
+      let responseBody = '';
+
+      response.on('data', (chunk) => {
+        responseBody += chunk;
+      });
+
+      response.on('end', () => {
+        if (response.statusCode < 200 || response.statusCode > 299) {
+          reject(new Error(`Request failed with status code ${response.statusCode}: ${responseBody}`));
+        } else {
+          resolve(responseBody);
+        }
+      });
+    });
+
+    request.on('error', (err) => reject(new Error(`Network error: ${err.message}`)));
+
+    if (data) {
+      request.write(data);
+    }
+    request.end();
+  });
 };
 
 /**
- * Realiza uma requisição GET para o servidor remoto.
+ * Realiza uma requisição GET ao servidor remoto.
  * @returns {Promise<string>} A resposta do servidor.
  */
-const getRemoteData = async () => {
-  const client = getClient(); // Escolher entre https ou http com base na URL
+const getRemoteData = async (token) => {
   const options = {
-    hostname: 'new-valg-system-production.up.railway.app',
-    path: '/bills?isOverdue=true&returnMode=text',  // URL de consulta
+    hostname: HOSTNAME,
+    path: '/bills?isOverdue=true&returnMode=text',
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}` },
+  };
+
+  return makeRequest(options);
+};
+
+/**
+ * Realiza uma requisição POST ao servidor remoto.
+ * @param {string} slotValue - O valor que será inserido no corpo da requisição.
+ * @returns {Promise<string>} A resposta do servidor.
+ */
+const postRemoteData = async (slotValue, token) => {
+  const data = JSON.stringify({
+    dataType: 'text',
+    data: `conta ${slotValue}`,
+  });
+
+  const options = {
+    hostname: HOSTNAME,
+    path: '/bills',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Content-Length': Buffer.byteLength(data),
+      'Authorization': `Bearer ${token}`
+    },
+  };
+
+  return makeRequest(options, data);
+};
+
+/**
+ * Realiza uma requisição PUT ao servidor remoto.
+ * @param {Object} slotValue - Os dados para atualizar.
+ * @returns {Promise<string>} A resposta do servidor.
+ */
+const putRemoteData = async (slotValue, token) => {
+  const data = JSON.stringify({ data: slotValue });
+
+  const options = {
+    hostname: HOSTNAME,
+    path: '/bills',
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'Content-Length': Buffer.byteLength(data),
+      'Authorization': `Bearer ${token}`
+    },
+  };
+
+  return makeRequest(options, data);
+};
+
+/**
+ * Realiza uma busca no servidor remoto com base no valor fornecido.
+ * @param {string} slotValue - O valor de busca.
+ * @returns {Promise<string>} A resposta do servidor.
+ */
+const findRemoteData = async (slotValue, token) => {
+  const data = JSON.stringify({ data: slotValue });
+
+  const options = {
+    hostname: HOSTNAME,
+    path: '/bills/finder',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Content-Length': Buffer.byteLength(data),
+      'Authorization': `Bearer ${token}`
+    },
+  };
+
+  return makeRequest(options, data);
+};
+
+const authenticateData = async (amazonId) => {
+  const options = {
+    hostname: "hopeful-imagination-production.up.railway.app",
+    path: `/auth/get-amazon-userid-by-amazonuserid?&amazonUserId=${amazonId}`,
     method: 'GET',
     headers: {
-      'Content-Type': 'application/json',  // Cabeçalho para conteúdo JSON
+      'Content-Type': 'application/json',
     },
-  };
-
-  // Retorna uma Promise, mas com async/await para facilitar a leitura
-  try {
-    const response = await new Promise((resolve, reject) => {
-      const request = client.get(options, (response) => {
-        let data = '';
-
-        // Acompanhar os dados da resposta
-        response.on('data', (chunk) => {
-          data += chunk;
-        });
-
-        // Ao finalizar a resposta, resolver a Promise
-        response.on('end', () => {
-          // Verificar o código de status e tratar erros
-          if (response.statusCode < 200 || response.statusCode > 299) {
-            reject(new Error(`Request failed with status code ${response.statusCode}`));
-          }
-          resolve(data);
-        });
-      });
-
-      // Tratar erro de rede ou outros erros relacionados à requisição
-      request.on('error', (err) => reject(err));
-    });
-
-    return response;
-  } catch (error) {
-    // Tratar erros gerais, como problemas de rede ou resposta inválida
-    throw new Error(`Failed to fetch remote data: ${error.message}`);
   }
+
+  return makeRequest(options);
 };
 
-/**
- * Realiza uma requisição POST para o servidor remoto.
- * @param {string} slotValue O valor que será inserido no corpo da requisição.
- * @returns {Promise<string>} A resposta do servidor.
- */
-const postRemoteData = async (slotValue) => {
-  const client = getClient();  // Escolher entre https ou http
+const setAmazonIdAccount = async (amazonId, otp) => {
   const data = JSON.stringify({
-    dataType: "text",
-    data: `conta ${slotValue}`,  // Concatenar a string com o slotValue
+    amazonUserId: amazonId,
+    OTPCode: otp,
   });
 
   const options = {
-    hostname: 'new-valg-system-production.up.railway.app',
-    path: '/bills',  // URL do endpoint
-    method: 'POST',
+    hostname: 'hopeful-imagination-production.up.railway.app',
+    path: '/auth/register-amazonuserid',
+    method: 'PATCH',
     headers: {
-      'Content-Type': 'application/json',  // Definir o tipo de conteúdo como JSON
-      'Content-Length': Buffer.byteLength(data),  // Definir o comprimento do corpo
+      'Content-Type': 'application/json',
     },
   };
 
-  // Retorna uma Promise, mas com async/await para simplificar a leitura
-  try {
-    const response = await new Promise((resolve, reject) => {
-      const request = client.request(options, (response) => {
-        let responseBody = '';
+  return makeRequest(options, data);
+}
 
-        // Acompanhar os dados da resposta
-        response.on('data', (chunk) => {
-          responseBody += chunk;
-        });
-
-        // Ao finalizar a resposta, resolver a Promise
-        response.on('end', () => {
-          // Verificar o código de status e tratar erros
-          if (response.statusCode < 200 || response.statusCode > 299) {
-            reject(new Error(`Request failed with status code ${response.statusCode}`));
-          }
-          resolve(responseBody);
-        });
-      });
-
-      // Tratar erro de rede ou outros erros relacionados à requisição
-      request.on('error', (err) => reject(err));
-
-      // Escrever o corpo da requisição
-      request.write(data);
-
-      // Finalizar a requisição
-      request.end();
-    });
-
-    return response;
-  } catch (error) {
-    // Tratar erros gerais
-    throw new Error(`Failed to post data: ${error.message}`);
-  }
-};
-
-const putRemoteData = async (slotValue) => {
-  const client = getClient();  // Escolher entre https ou http
-  
-  const data = JSON.stringify({
-    data: slotValue,  // espera objeto de update
-  });
-
-  const options = {
-    hostname: 'new-valg-system-production.up.railway.app',
-    path: '/bills',  // URL do endpoint
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',  // Definir o tipo de conteúdo como JSON
-      'Content-Length': Buffer.byteLength(data),  // Definir o comprimento do corpo
-    },
-  };
-
-  // Retorna uma Promise, mas com async/await para simplificar a leitura
-  try {
-    const response = await new Promise((resolve, reject) => {
-      const request = client.request(options, (response) => {
-        let responseBody = '';
-
-        // Acompanhar os dados da resposta
-        response.on('data', (chunk) => {
-          responseBody += chunk;
-        });
-
-        // Ao finalizar a resposta, resolver a Promise
-        response.on('end', () => {
-          // Verificar o código de status e tratar erros
-          if (response.statusCode < 200 || response.statusCode > 299) {
-            reject(new Error(`Request failed with status code ${response.statusCode}`));
-          }
-          resolve(responseBody);
-        });
-      });
-
-      // Tratar erro de rede ou outros erros relacionados à requisição
-      request.on('error', (err) => reject(err));
-
-      // Escrever o corpo da requisição
-      request.write(data);
-
-      // Finalizar a requisição
-      request.end();
-    });
-
-    return response;
-  } catch (error) {
-    // Tratar erros gerais
-    throw new Error(`Failed to post data: ${error.message}`);
-  }
-};
-
-const findRemoteData = async (slotValue) => {
-  const client = getClient();  // Escolher entre https ou http
-  const data = JSON.stringify({
-    data: slotValue,  // Concatenar a string com o slotValue
-  });
-
-  const options = {
-    hostname: 'new-valg-system-production.up.railway.app',
-    path: '/bills/finder',  // URL do endpoint
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',  // Definir o tipo de conteúdo como JSON
-      'Content-Length': Buffer.byteLength(data),  // Definir o comprimento do corpo
-    },
-  };
-
-  // Retorna uma Promise, mas com async/await para simplificar a leitura
-  try {
-    const response = await new Promise((resolve, reject) => {
-      const request = client.request(options, (response) => {
-        let responseBody = '';
-
-        // Acompanhar os dados da resposta
-        response.on('data', (chunk) => {
-          responseBody += chunk;
-        });
-
-        // Ao finalizar a resposta, resolver a Promise
-        response.on('end', () => {
-          // Verificar o código de status e tratar erros
-          if (response.statusCode < 200 || response.statusCode > 299) {
-            reject(new Error(`Request failed with status code ${response.statusCode}`));
-          }
-          resolve(responseBody);
-        });
-      });
-
-      // Tratar erro de rede ou outros erros relacionados à requisição
-      request.on('error', (err) => reject(err));
-
-      // Escrever o corpo da requisição
-      request.write(data);
-
-      // Finalizar a requisição
-      request.end();
-    });
-
-    return response;
-  } catch (error) {
-    // Tratar erros gerais
-    throw new Error(`Failed to post data: ${error.message}`);
-  }
-};
-
-
-
-// Exportação das funções para que possam ser usadas em outros módulos
+// Exporta as funções para uso em outros módulos
 module.exports = {
   getRemoteData,
   postRemoteData,
-  findRemoteData,
   putRemoteData,
+  findRemoteData,
+  authenticateData,
+  setAmazonIdAccount,
 };

@@ -14,10 +14,11 @@ const checkBills = {
             && handlerInput.requestEnvelope.request.intent.name === 'bills';  
       },  
   async handle(handlerInput) {  
-   
-   let outputSpeech = '';
+    const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
+    
+    let outputSpeech = '';
   
-    await service.getRemoteData()  
+    await service.getRemoteData(sessionAttributes.accessToken)  
       .then((response) => {  
         const data = JSON.parse(response);  
         outputSpeech = data;  
@@ -42,11 +43,12 @@ const createBill = {
           && handlerInput.requestEnvelope.request.intent.name === 'createBill';  
     },  
     async handle(handlerInput) {  
+        const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
         const slotValue = handlerInput.requestEnvelope.request.intent.slots.bill.value;
         
         let outputSpeech = '';
         
-        await service.postRemoteData(slotValue).then((response) => {  
+        await service.postRemoteData(slotValue, sessionAttributes.accessToken).then((response) => {  
             const data = JSON.parse(response);  
             outputSpeech = data.message;  
         }).catch((err) => {  
@@ -69,14 +71,14 @@ const updateBill = {
           && handlerInput.requestEnvelope.request.intent.name === 'updateBill';  
     },  
     async handle(handlerInput) {  
-      const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
+        const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
    
         const slotValue = handlerInput.requestEnvelope.request.intent.slots.bill.value;
         let outputSpeech = '';
        
         if(!sessionAttributes.billToPay) {
             
-            await service.findRemoteData(slotValue).then((response) => {  
+            await service.findRemoteData(slotValue, sessionAttributes.accessToken).then((response) => {  
                 const data = JSON.parse(response);  
                 outputSpeech = "Tem certeza que deseja atualizar essa conta?";  
                 
@@ -124,7 +126,7 @@ const confirmUpdateBill = {
                 status: "Pago"
             }
             
-            await service.putRemoteData(billToPay).then((response) => {  
+            await service.putRemoteData(billToPay, sessionAttributes.accessToken).then((response) => {  
                 const data = JSON.parse(response);  
                 outputSpeech = data.message + ' ';  
                 
@@ -147,25 +149,69 @@ const confirmUpdateBill = {
     },  
 };
 
+const authenticateAccount = {
+    canHandle(handlerInput) {  
+        // Retorna o resultado da verificação
+        return handlerInput.requestEnvelope.request.type === 'IntentRequest'  
+            && handlerInput.requestEnvelope.request.intent.name === 'authenticateAccount';  
+    },  
+    async handle(handlerInput) {  
+        const slotValue = handlerInput.requestEnvelope.request.intent.slots.otp.value;
+
+        await service.setAmazonIdAccount(handlerInput.requestEnvelope.context.System.user.userId, slotValue).then((response) => {  
+            const data = JSON.parse(response);  
+            outputSpeech = data.message + ' ';  
+            
+        }).catch((err) => {  
+            console.log(`ERROR: ${err.message}`);  
+            outputSpeech = `Desculpe, não foi possível vincular a sua conta amazon ao sistema. ${err.message} `;
+        }); 
+        
+        return handlerInput.responseBuilder.speak(outputSpeech + commonMessage).reprompt(commonMessage).getResponse();
+    }, 
+}
+
+const infoAccount = {
+    canHandle(handlerInput) {  
+        // Retorna o resultado da verificação
+        return handlerInput.requestEnvelope.request.type === 'IntentRequest'  
+            && handlerInput.requestEnvelope.request.intent.name === 'infoAccount';  
+    },  
+    async handle(handlerInput) {  
+        const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
+   
+        let outputSpeech = `accessToken: ${sessionAttributes.accessToken}. `;
+        
+        return handlerInput.responseBuilder.speak(outputSpeech + commonMessage).reprompt(commonMessage).getResponse();
+    }, 
+}
+
 const LaunchRequestHandler = {
     canHandle(handlerInput) {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest';
     },
-    handle(handlerInput) {
-        const speakOutput = '';
+    async handle(handlerInput) {
+        let outputSpeech = '';
 
-        //ESTUDOS PARA ATRIBUIÇÃO DE VARIÁVEIS NA CONVERSA POR COMPLETO
-        const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
-    
-        const favoriteColor = "blue"
-        
-        sessionAttributes.favoriteColor = favoriteColor;
-        
-        handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+        await service.authenticateData(handlerInput.requestEnvelope.context.System.user.userId).then((response) => {  
+            const data = JSON.parse(response);  
+            
+            const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
+            
+            sessionAttributes.accessToken = data.accessToken;
+            
+            outputSpeech = ' ';  
+            
+            
+        }).catch((err) => {  
+            console.log(`ERROR: ${err.message}`);  
+            outputSpeech = `Desculpe, não foi possível encontrar a sua conta ativa no sistema. ${err.message} `;
+        }); 
+
 
 
         return handlerInput.responseBuilder
-        .speak(speakOutput + commonMessage)
+        .speak(outputSpeech + commonMessage)
         .reprompt(commonMessage)
         .getResponse();
     }
@@ -300,6 +346,8 @@ exports.handler = Alexa.SkillBuilders.custom()
         updateBill,
         createBill,
         confirmUpdateBill,
+        authenticateAccount,
+        infoAccount,
         HelloWorldIntentHandler,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
