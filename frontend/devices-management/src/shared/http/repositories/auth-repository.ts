@@ -7,6 +7,10 @@ export interface RegisterRepositoryParams {
   password: string;
 }
 
+export interface RegisterRepositoryResponse {
+  accessToken: string;
+}
+
 export interface LoginRepositoryParams {
   email: string;
   password: string;
@@ -30,11 +34,11 @@ class AuthRepository extends BaseRepository {
     }
   }
 
-  async register<T>(data: RegisterRepositoryParams): Promise<T> {
+  async register(data: RegisterRepositoryParams): Promise<void> {
     const { name, phone, email, password } = data;
 
     try {
-      return await this.api.post<T>("/register", {
+      return await this.api.post<void>("/register", {
         name,
         celNumber: phone,
         email,

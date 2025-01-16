@@ -69,7 +69,7 @@ export function RegisterForm() {
         description: "You are now registered, you will be redirected shortly.",
       });
 
-      router.push(AppPath.Dashboard);
+      router.push(AppPath.Login);
     } catch (error) {
       if (error instanceof Error) {
         toast.error("Failed to register. Please try again.", {

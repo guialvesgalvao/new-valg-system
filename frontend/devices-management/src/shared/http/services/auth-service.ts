@@ -37,7 +37,7 @@ class AuthService extends BaseService<AuthRepository> {
    * @param confirmPassword - Confirmação da senha.
    * @returns Dados do usuário registrado.
    */
-  async register(data: RegisterServiceParams) {
+  async register(data: RegisterServiceParams): Promise<void> {
     const { email, password, confirmPassword } = data;
 
     try {
