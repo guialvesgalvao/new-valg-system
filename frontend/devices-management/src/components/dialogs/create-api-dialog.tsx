@@ -11,8 +11,14 @@ import { Button } from "../ui/button";
 import { Plus } from "lucide-react";
 import { Separator } from "../ui/separator";
 import { CreateApiForm } from "../forms/create-api-form";
+import { CreateLongLifeResponse } from "@/shared/http/repositories/token-repository";
 
-export function CreateApiDialog() {
+interface ICreateApiDialogProps {
+  onSave: (data: CreateLongLifeResponse) => void;
+}
+
+export function CreateApiDialog(props: Readonly<ICreateApiDialogProps>) {
+  const { onSave } = props;
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -29,7 +35,12 @@ export function CreateApiDialog() {
         </DialogDescription>
         <Separator />
 
-        <CreateApiForm onSave={() => setIsOpen(false)} />
+        <CreateApiForm
+          onSave={(data) => {
+            onSave(data);
+            setIsOpen(false);
+          }}
+        />
       </DialogContent>
     </Dialog>
   );

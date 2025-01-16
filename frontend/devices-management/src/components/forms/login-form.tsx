@@ -54,7 +54,9 @@ export function LoginForm() {
         description: "Please wait while we log you in.",
       });
 
-      await authService.login({ email, password });
+      const { accessToken } = await authService.login({ email, password });
+
+      localStorage.setItem("accessToken", accessToken);
 
       toast.success("Logged in successfully!", {
         id: "login",

@@ -6,7 +6,7 @@ import Providers from "@/components/providers";
 
 const publicSansFont = Public_Sans({
   weight: ["300", "400", "500", "600", "700", "800"],
-  subsets: ["latin"], // aqui você define 
+  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {

@@ -12,12 +12,19 @@ export interface LoginRepositoryParams {
   password: string;
 }
 
+export interface LoginRepositoryResponse {
+  accessToken: string;
+}
+
 class AuthRepository extends BaseRepository {
-  async login<T>(data: LoginRepositoryParams): Promise<T> {
+  async login(data: LoginRepositoryParams): Promise<LoginRepositoryResponse> {
     const { email, password } = data;
 
     try {
-      return await this.api.post<T>("/login", { email, password });
+      return await this.api.post<LoginRepositoryResponse>("/login", {
+        email,
+        password,
+      });
     } catch (error) {
       throw this.createErrorMessage(error, "Erro ao realizar login.");
     }
@@ -62,17 +69,6 @@ class AuthRepository extends BaseRepository {
       await this.api.post("/refresh-token");
     } catch (error) {
       throw this.createErrorMessage(error, "Erro ao atualizar o token.");
-    }
-  }
-
-  async getLongLiveToken(): Promise<void> {
-    try {
-      return await this.api.post("/long-live-token");
-    } catch (error) {
-      throw this.createErrorMessage(
-        error,
-        "Erro ao obter o token de longa duração."
-      );
     }
   }
 }

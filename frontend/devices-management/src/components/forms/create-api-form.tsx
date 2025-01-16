@@ -22,10 +22,12 @@ import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
-import { delay } from "@/lib/mock";
+
+import { tokenService } from "@/shared/http/factories/token-factory";
+import { CreateLongLifeResponse } from "@/shared/http/repositories/token-repository";
 
 interface ICreateApiFormProps {
-  onSave?: (data: CreateApiValidationType) => void;
+  onSave?: (data: CreateLongLifeResponse) => void;
 }
 
 export function CreateApiForm(props: Readonly<ICreateApiFormProps>) {
@@ -51,10 +53,10 @@ export function CreateApiForm(props: Readonly<ICreateApiFormProps>) {
         description: "Please wait while we create your API.",
       });
 
-      await delay(2000);
+      const response = await tokenService.createLongLife();
 
       form.reset();
-      if (onSave) onSave(data);
+      if (onSave) onSave(response);
 
       toast.success("API created successfully!", {
         id: "create-api",

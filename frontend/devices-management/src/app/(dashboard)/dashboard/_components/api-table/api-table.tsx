@@ -3,6 +3,7 @@
 import { DataTable } from "@/components/data-table/data-table";
 import { useState, useEffect } from "react";
 import { apiKeysColumns } from "./api-table-columns";
+import { OTPDialog } from "@/components/alert-dialogs/otp-dialog";
 
 export function ApiTable() {
   const [isMounted, setIsMounted] = useState(false);
@@ -16,31 +17,18 @@ export function ApiTable() {
   }
 
   return (
-    <DataTable
-      id="api-table"
-      columns={apiKeysColumns}
-      data={[
-        {
-          name: "Test API",
-          type: "REST",
-          description: "A test API",
-          secret: "123456",
-          createdAt: new Date(),
-        },
-        {
-          name: "Test API 2",
-          type: "GraphQL",
-          description: "Another test API",
-          secret: "654321",
-          createdAt: new Date(),
-        },
-      ]}
-      defaultSorting={[
-        {
-          id: "createdAt",
-          desc: true,
-        },
-      ]}
-    />
+    <>
+      <DataTable
+        id="api-table"
+        columns={apiKeysColumns}
+        data={[]}
+        defaultSorting={[
+          {
+            id: "createdAt",
+            desc: true,
+          },
+        ]}
+      />
+    </>
   );
 }

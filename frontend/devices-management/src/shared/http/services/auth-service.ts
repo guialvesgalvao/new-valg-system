@@ -2,6 +2,7 @@ import {
   AuthRepository,
   RegisterRepositoryParams,
   LoginRepositoryParams,
+  LoginRepositoryResponse,
 } from "../repositories/auth-repository";
 import { BaseService } from "./base-service";
 
@@ -16,7 +17,7 @@ class AuthService extends BaseService<AuthRepository> {
    * @param password - Senha do usuário.
    * @returns Dados do usuário autenticado.
    */
-  async login(data: LoginRepositoryParams) {
+  async login(data: LoginRepositoryParams): Promise<LoginRepositoryResponse> {
     const { email, password } = data;
 
     try {

@@ -10,6 +10,7 @@ import { usePathname } from "next/navigation";
 import { ModeToggle } from "@/app/(auth)/auth/_components/theme-toogle";
 import { Button } from "../ui/button";
 import { ArrowBigLeftDash, ArrowBigRightDash } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 
 interface IDesktopSidebarProps {
   routes: ISidebarNodeProps[];
@@ -23,66 +24,88 @@ export function DesktopSidebar(props: Readonly<IDesktopSidebarProps>) {
   const pathname = usePathname();
 
   return (
-    <aside
-      className={cn(
-        "bg-accent h-full flex flex-col gap-y-8 rounded-r-3xl border-r border-border",
-        isMenuOpen ? "w-[300px]" : "w-[88px]"
-      )}
-    >
-      <div
+    <AnimatePresence>
+      <aside
         className={cn(
-          "w-full flex text-primary py-10",
-          isMenuOpen
-            ? "justify-start items-center pl-6"
-            : "items-center justify-center"
+          "bg-accent h-full flex flex-col gap-y-8 rounded-r-3xl border-r border-border",
+          isMenuOpen ? "w-[300px]" : "w-[88px]"
         )}
       >
-        <Link className="cursor-pointer" href={AppPath.Dashboard}>
-          {isMenuOpen ? (
-            <Logo className="text-muted-foreground" />
-          ) : (
-            <ShortLogo className="text-muted-foreground" />
+        <motion.div
+          className={cn(
+            "w-full flex text-primary py-10",
+            isMenuOpen
+              ? "justify-start items-center pl-6"
+              : "items-center justify-center"
           )}
-        </Link>
-      </div>
-
-      <div className="w-full flex flex-col items-center justify-center gap-y-3">
-        {routes.map((route, index) => (
-          <NodeButton
-            key={index}
-            currentPath={pathname}
-            isMenuOpen={isMenuOpen}
-            {...route}
-          />
-        ))}
-      </div>
-
-      <div className="w-full flex flex-col mt-auto pb-8">
-        <div className="w-full flex items-center justify-center">
-          <Button
-            variant="ghost"
-            className={cn(
-              "h-14 p-2 text-primary",
-              isMenuOpen ? "w-full pl-6" : "w-14"
-            )}
-            onClick={toggleMenu}
-          >
-            {!isMenuOpen ? (
-              <ArrowBigRightDash size={24} />
+          variants={{
+            hidden: {
+              opacity: 0,
+            },
+            visible: {
+              opacity: 1,
+            },
+          }}
+        >
+          <Link className="cursor-pointer" href={AppPath.Dashboard}>
+            {isMenuOpen ? (
+              <Logo className="text-muted-foreground" />
             ) : (
-              <div className="w-full flex items-center justify-start gap-x-4">
-                <ArrowBigLeftDash size={24} />
-                <span>Close</span>
-              </div>
+              <ShortLogo className="text-muted-foreground" />
             )}
-          </Button>
-        </div>
+          </Link>
+        </motion.div>
 
-        <div className="w-full flex items-center justify-center">
-          <ModeToggle className="text-primary" />
+        <motion.div
+          variants={{
+            visible: {
+              transition: {
+                delayChildren: 0.4,
+                staggerChildren: 0.05,
+              },
+            },
+          }}
+          initial="hidden"
+          animate="visible"
+          className="w-full flex flex-col items-center justify-center gap-y-3"
+        >
+          {routes.map((route, index) => (
+            <NodeButton
+              key={index}
+              currentPath={pathname}
+              isMenuOpen={isMenuOpen}
+              {...route}
+            />
+          ))}
+        </motion.div>
+
+        <div className="w-full flex flex-col mt-auto pb-8">
+          <div className="w-full flex items-center justify-center">
+            <Button
+              variant="ghost"
+              className={cn(
+                "h-14 p-2 text-primary",
+                isMenuOpen ? "w-full pl-6" : "w-14"
+              )}
+              onClick={toggleMenu}
+            >
+              {!isMenuOpen ? (
+                <ArrowBigRightDash size={24} />
+              ) : (
+                <div className="w-full flex items-center justify-start gap-x-4">
+                  <ArrowBigLeftDash size={24} />
+                  <span>Close</span>
+                </div>
+              )}
+            </Button>
+          </div>
+
+          <div className="w-full flex items-center justify-center">
+            <ModeToggle className="text-primary" />
+          </div>
         </div>
-      </div>
-    </aside>
+      </aside>
+    </AnimatePresence>
   );
 }
 
@@ -95,11 +118,19 @@ function NodeButton(props: Readonly<INodeButtonProps>) {
   const { text, href, icon: Icon, currentPath, isMenuOpen } = props;
 
   return (
-    <div
+    <motion.div
       className={cn(
         "w-full flex items-center justify-center",
         isMenuOpen ? "pr-6" : ""
       )}
+      variants={{
+        hidden: {
+          opacity: 0,
+        },
+        visible: {
+          opacity: 1,
+        },
+      }}
     >
       <Link
         className={cn(
@@ -118,6 +149,6 @@ function NodeButton(props: Readonly<INodeButtonProps>) {
           <span className="ml-3 text-base font-medium">{text}</span>
         )}
       </Link>
-    </div>
+    </motion.div>
   );
 }

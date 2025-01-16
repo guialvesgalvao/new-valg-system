@@ -1,4 +1,6 @@
 import ApiInstance from "../api/api-instance/api-instance";
+import AuthApiInterceptors from "../api/api-interceptors/api-auth-interceptor";
+import ApiInterceptors from "../api/api-interceptors/api-interceptors";
 
 import ApiService from "../api/api-service/api-service";
 
