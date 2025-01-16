@@ -12,8 +12,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 
-export function ModeToggle() {
+interface IModeToogleProps {
+  className?: string;
+}
+
+export function ModeToggle(props: Readonly<IModeToogleProps>) {
+  const { className } = props;
   const { setTheme } = useTheme();
 
   return (
@@ -24,7 +30,7 @@ export function ModeToggle() {
           className="w-10 h-10 flex items-center justify-center text-primary-foreground dark:text-primary"
         >
           <motion.div
-            className="flex items-center justify-center"
+            className={cn("flex items-center justify-center", className)}
             initial={{ rotate: 0 }}
             animate={{ rotate: 360 }}
             transition={{ duration: 0.5 }}

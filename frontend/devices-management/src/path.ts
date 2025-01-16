@@ -1,5 +1,6 @@
 export const AppPath = {
-  ROOT: "/",
+  Root: "/",
+  Settings: "/settings",
 
   // Rotas de autenticação
   Login: "/auth/login",

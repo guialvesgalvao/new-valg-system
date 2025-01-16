@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import { Public_Sans } from "next/font/google";
 
 import "./globals.css";
 import Providers from "@/components/providers";
 
-const interFont = Poppins({
+const publicSansFont = Public_Sans({
   weight: ["300", "400", "500", "600", "700", "800"],
-  subsets: ["latin"], // aqui você define o subset
-  preload: false, // se quiser manter o preload
+  subsets: ["latin"], // aqui você define 
 });
 
 export const metadata: Metadata = {
@@ -22,7 +21,7 @@ interface IRootLayoutProps {
 export default function RootLayout({ children }: Readonly<IRootLayoutProps>) {
   return (
     <html lang="en">
-      <body className={`${interFont.className}  antialiased`}>
+      <body className={`${publicSansFont.className}  antialiased`}>
         <Providers>{children}</Providers>
       </body>
     </html>

@@ -27,8 +27,11 @@ import { redirect } from "next/navigation";
 import { AppPath } from "@/path";
 import { motion } from "framer-motion";
 import { PhoneInput } from "../ui/phone-input";
+import { useRouter } from "next/router";
 
 export function RegisterForm() {
+  const router = useRouter();
+
   const form = useForm<RegisterValidationType>({
     defaultValues: {
       name: "",
@@ -66,7 +69,7 @@ export function RegisterForm() {
         description: "You are now registered, you will be redirected shortly.",
       });
 
-      redirect(AppPath.Dashboard);
+      router.push(AppPath.Dashboard);
     } catch (error) {
       if (error instanceof Error) {
         toast.error("Failed to register. Please try again.", {

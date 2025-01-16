@@ -45,7 +45,7 @@ export function GetStartedBanner(props: Readonly<IGetStartedBannerProps>) {
             transition={{ delay: 0.2 }}
             className="w-full flex items-start justify-start text-primary-foreground dark:text-primary"
           >
-            <Logo />
+            <Logo isPulse />
           </motion.div>
 
           <ModeToggle />

@@ -28,7 +28,7 @@ export default function LayoutAuth({ children }: Readonly<ILayoutAuthProps>) {
       <section className="w-full h-full flex flex-col items-center justify-center relative">
         <div className="max-w-[800px] w-full h-full">{children}</div>
         <div className="flex lg:hidden">
-          <Logo />
+          <Logo isPulse />
         </div>
 
         <div className="absolute top-4 right-4 lg:hidden">

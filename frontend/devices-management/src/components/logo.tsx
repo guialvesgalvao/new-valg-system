@@ -2,14 +2,32 @@
 
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { Mic } from "lucide-react";
+import { ReceiptText } from "lucide-react";
 
 interface ILogoProps {
   className?: string;
+  isPulse?: boolean;
 }
 
-export function Logo(props: Readonly<ILogoProps>) {
-  const { className } = props;
+interface ILogoWrapperProps extends ILogoProps {
+  children: React.ReactNode;
+}
+
+function LogoWrapperComp(props: Readonly<ILogoWrapperProps>) {
+  const { isPulse, className, children } = props;
+
+  if (!isPulse) {
+    return (
+      <div
+        className={cn(
+          "flex items-center gap-2 select-none cursor-default",
+          className
+        )}
+      >
+        {children}
+      </div>
+    );
+  }
 
   return (
     <motion.div
@@ -21,10 +39,30 @@ export function Logo(props: Readonly<ILogoProps>) {
         className
       )}
     >
-      <Mic className="w-6 h-6 md:w-8 md:h-8" />
+      {children}
+    </motion.div>
+  );
+}
+
+export function Logo(props: Readonly<ILogoProps>) {
+  const { className, isPulse = false } = props;
+
+  return (
+    <LogoWrapperComp className={className} isPulse={isPulse}>
+      <ReceiptText className="w-6 h-6 md:w-8 md:h-8" />
       <h1 className="font-bold">
         <span>Valg</span> System
       </h1>
-    </motion.div>
+    </LogoWrapperComp>
+  );
+}
+
+export function ShortLogo(props: Readonly<ILogoProps>) {
+  const { className, isPulse } = props;
+
+  return (
+    <LogoWrapperComp className={className} isPulse={isPulse}>
+      <ReceiptText className="w-6 h-6 md:w-8 md:h-8" />
+    </LogoWrapperComp>
   );
 }

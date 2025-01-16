@@ -24,7 +24,7 @@ export default function NotFound() {
             variant: "default",
             className: "w-full mt-4",
           })}
-          href={AppPath.ROOT}
+          href={AppPath.Root}
         >
           Go back to home
         </Link>

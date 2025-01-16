@@ -26,12 +26,14 @@ import { AppPath } from "@/path";
 import { authService } from "@/shared/http/factories/auth-factory";
 
 import { toast } from "sonner";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { RedirectText } from "../redirect-text";
 import { motion } from "framer-motion";
 import { FieldRowWrapper } from "./field-row-wrapper";
 
 export function LoginForm() {
+  const router = useRouter();
+
   const form = useForm<LoginValidationType>({
     defaultValues: {
       email: "",
@@ -59,7 +61,7 @@ export function LoginForm() {
         description: "You are now logged in, you will be redirected shortly.",
       });
 
-      redirect(AppPath.Dashboard);
+      router.push(AppPath.Dashboard);
     } catch (error) {
       if (error instanceof Error) {
         toast.error("Failed to log in. Please try again.", {
@@ -86,7 +88,7 @@ export function LoginForm() {
             render={({ field }) => (
               <FormItem>
                 <FieldRowWrapper>
-                  <FormLabel>Email Address</FormLabel>
+                  <FormLabel required>Email Address</FormLabel>
 
                   <RedirectText
                     className="text-xs underline"
@@ -114,7 +116,7 @@ export function LoginForm() {
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel required>Password</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
