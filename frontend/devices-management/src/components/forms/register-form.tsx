@@ -23,11 +23,11 @@ import { UserRoundPlus } from "lucide-react";
 import { FieldSpacer } from "./field-spacer";
 import { toast } from "sonner";
 import { authService } from "@/shared/http/factories/auth-factory";
-import { redirect } from "next/navigation";
+
 import { AppPath } from "@/path";
 import { motion } from "framer-motion";
 import { PhoneInput } from "../ui/phone-input";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 export function RegisterForm() {
   const router = useRouter();
