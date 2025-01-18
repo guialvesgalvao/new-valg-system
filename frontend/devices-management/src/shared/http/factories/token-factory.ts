@@ -1,23 +1,18 @@
 import ApiInstance from "../api/api-instance/api-instance";
-import ApiInterceptors from "../api/api-interceptors/api-interceptors";
+import AuthApiInterceptors from "../api/api-interceptors/api-auth-interceptor";
+
 import ApiService from "../api/api-service/api-service";
 import { TokenRepository } from "../repositories/token-repository";
 import { TokenService } from "../services/token-service";
 
-const createRequest = ApiInterceptors.createRequestInterceptor((config) => {
-  const token = localStorage.getItem("accessToken");
-
-  config.headers["Authorization"] = `Bearer ${token}`;
-  return config;
-});
-
 const initializeTokenService = (): TokenService => {
-  const baseURL = "https://hopeful-imagination-production.up.railway.app/token";
-  const api = new ApiInstance(baseURL);
-
-  const interceptors = new ApiInterceptors({
-    request: createRequest,
+  const baseURL = process.env.NEXT_PUBLIC_API_URL + "/token";
+  const api = new ApiInstance(baseURL, {
+    withCredentials: true,
+    timeout: 5000,
   });
+
+  const interceptors = new AuthApiInterceptors(api);
 
   const service = new ApiService(api.instance, interceptors);
   const repository = new TokenRepository(service);

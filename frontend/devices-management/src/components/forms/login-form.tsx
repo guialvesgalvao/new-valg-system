@@ -30,6 +30,7 @@ import { useRouter } from "next/navigation";
 import { RedirectText } from "../redirect-text";
 import { motion } from "framer-motion";
 import { FieldRowWrapper } from "./field-row-wrapper";
+import { tokenService } from "@/shared/http/factories/token-factory";
 
 export function LoginForm() {
   const router = useRouter();
@@ -54,9 +55,7 @@ export function LoginForm() {
         description: "Please wait while we log you in.",
       });
 
-      const { accessToken } = await authService.login({ email, password });
-
-      localStorage.setItem("accessToken", accessToken);
+      await authService.login({ email, password });
 
       toast.success("Logged in successfully!", {
         id: "login",
@@ -145,6 +144,10 @@ export function LoginForm() {
         >
           <LogIn size={20} />
           Log in
+        </Button>
+
+        <Button type="button" onClick={tokenService.createLongLife}>
+          Refresh
         </Button>
       </motion.form>
     </Form>

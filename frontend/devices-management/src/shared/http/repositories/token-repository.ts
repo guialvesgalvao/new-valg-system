@@ -6,10 +6,14 @@ export interface CreateLongLifeResponse {
   OTPExpiresDate: string;
 }
 
+export interface RefreshTokenResponse {
+  accessToken: string;
+}
+
 class TokenRepository extends BaseRepository {
-  async refreshToken(): Promise<void> {
+  async refreshToken(): Promise<RefreshTokenResponse> {
     try {
-      return await this.api.post("/refresh-token");
+      return await this.api.post<RefreshTokenResponse>("/refresh");
     } catch (error) {
       throw this.createErrorMessage(error, "Erro ao atualizar o token.");
     }

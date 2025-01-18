@@ -17,14 +17,20 @@ class AuthService extends BaseService<AuthRepository> {
    * @param password - Senha do usuário.
    * @returns Dados do usuário autenticado.
    */
-  async login(data: LoginRepositoryParams): Promise<LoginRepositoryResponse> {
+  async login(data: LoginRepositoryParams): Promise<void> {
     const { email, password } = data;
 
     try {
       this._validateEmail(email);
       this._validatePassword(password);
 
-      return await this.repository.login({ email, password });
+      const { accessToken } = await this.repository.login({ email, password });
+
+      if (!accessToken) {
+        throw new Error("Invalid access token");
+      }
+
+      localStorage.setItem("accessToken", accessToken);
     } catch (error) {
       throw this.getErrorMessage(error, "Login failed");
     }

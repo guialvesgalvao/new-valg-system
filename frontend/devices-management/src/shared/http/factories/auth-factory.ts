@@ -12,7 +12,7 @@ import { AuthService } from "../services/auth-service";
  * Encapsula a lógica de instanciamento para facilitar a reusabilidade e manutenção.
  */
 const initializeAuthService = (): AuthService => {
-  const baseURL = "https://hopeful-imagination-production.up.railway.app/auth";
+  const baseURL = process.env.NEXT_PUBLIC_API_URL + "/auth";
   const api = new ApiInstance(baseURL);
 
   const service = new ApiService(api.instance);

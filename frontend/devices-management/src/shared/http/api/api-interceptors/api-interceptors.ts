@@ -1,4 +1,5 @@
 import { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "axios";
+import ApiInstance from "./../api-instance/api-instance";
 
 // Definição de tipos genéricos
 type CustomInterceptorFunction<T> = {
@@ -18,16 +19,24 @@ export type CustomAxiosInterceptorsParams = {
 };
 
 class ApiInterceptors {
+  private readonly _api: ApiInstance;
+
   private readonly _request?: CustomInterceptorRequestFunction;
   private readonly _response?: CustomInterceptorResponseFunction;
 
-  constructor(params?: CustomAxiosInterceptorsParams) {
+  constructor(api: ApiInstance, params?: CustomAxiosInterceptorsParams) {
     if (!params) {
       throw new Error("Interceptors params are required");
     }
 
+    this._api = api;
+
     this._request = params.request;
     this._response = params.response;
+  }
+
+  get api(): ApiInstance {
+    return this._api;
   }
 
   get request(): CustomInterceptorRequestFunction | undefined {

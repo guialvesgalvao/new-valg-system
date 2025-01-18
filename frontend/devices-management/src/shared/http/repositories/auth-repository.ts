@@ -7,9 +7,7 @@ export interface RegisterRepositoryParams {
   password: string;
 }
 
-export interface RegisterRepositoryResponse {
-  accessToken: string;
-}
+export interface RegisterRepositoryResponse {}
 
 export interface LoginRepositoryParams {
   email: string;
