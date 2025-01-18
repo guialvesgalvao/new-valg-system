@@ -10,6 +10,9 @@ const initializeTokenService = (): TokenService => {
   const api = new ApiInstance(baseURL, {
     withCredentials: true,
     timeout: 5000,
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 
   const interceptors = new AuthApiInterceptors(api);

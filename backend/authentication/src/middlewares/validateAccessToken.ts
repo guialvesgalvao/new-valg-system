@@ -15,7 +15,7 @@ export async function validateAccessToken(req: Request, res: Response, next: Nex
     res.status(401).json({ error: 'Token inválido' });
     return 
   }
-  console.log('Token Recebido', accessToken)
+  
   const session = new Token(0);
   const userId = await session.validateAccessToken(accessToken)
 

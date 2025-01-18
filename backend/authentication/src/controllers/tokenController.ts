@@ -18,7 +18,7 @@ async function createLongLifeToken(req: Request, res: Response): Promise<void> {
       accessTokenExpiresDate,
       refreshTokenExpiresDate,
       OTPCode,
-      OTPExpiresDate
+      OTPExpiresDate,
     } = token.create(TokenType.LongLife);
 
     const createRegisterInDB = await session.create({
@@ -29,12 +29,12 @@ async function createLongLifeToken(req: Request, res: Response): Promise<void> {
       accessTokenExpiresDate,
       refreshTokenExpiresDate,
       OTPCode,
-      OTPExpiresDate
+      OTPExpiresDate,
     });
 
-    if(createRegisterInDB){
+    if (createRegisterInDB) {
       res.status(201).json({ accessToken, OTPCode, OTPExpiresDate });
-      return
+      return;
     }
 
     res.status(500).json({ error: "Erro ao gerar o token" });
@@ -44,19 +44,16 @@ async function createLongLifeToken(req: Request, res: Response): Promise<void> {
 }
 
 async function refreshToken(req: Request, res: Response): Promise<void> {
-  const reqBody = req.body;
-  const reqCokkie = req.cookies.refreshToken;
-
-  const refreshToken = reqCokkie ?? reqBody;
+  const refreshToken = req.cookies?.refreshToken;
 
   if (!refreshToken) {
-    res.status(400).json({ error: "Refresh Token não informado" });
+    res.status(500).json({ error: "Refresh Token não informado" });
     return;
   }
 
   try {
-    const sessions = new SessionRepository()
-    const userSession = await sessions.getActiveSession(refreshToken)
+    const sessions = new SessionRepository();
+    const userSession = await sessions.getActiveSession(refreshToken);
 
     if (!userSession) {
       res.status(401).json({ error: "Token inválido" });
@@ -69,19 +66,23 @@ async function refreshToken(req: Request, res: Response): Promise<void> {
       res.status(401).json({ error: "Token inválido" });
       return;
     }
-    
+
     const token = new Token(decodedJWT.userId);
-    
-    const updateRefreshToken = await token.updateAccessToken(userSession.id);
-    
-    if(updateRefreshToken){
-      res.status(200).json({ token: updateRefreshToken });
-      return
+
+    const newAccessToken = await token.updateAccessToken(userSession.id);
+
+    if (newAccessToken) {
+      res.status(200).json({ token: newAccessToken });
+      return;
     }
 
-    res.status(500).json({ error: 'Não foi possível atualizar o token de accesso' });
+    res
+      .status(500)
+      .json({ error: "Não foi possível atualizar o token de accesso" });
   } catch (error) {
-    res.status(500).json({ error: 'Não foi possível atualizar o token de accesso' });
+    res
+      .status(500)
+      .json({ error: "Não foi possível atualizar o token de accesso" });
   }
 }
 

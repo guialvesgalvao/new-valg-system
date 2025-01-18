@@ -146,7 +146,7 @@ export function LoginForm() {
           Log in
         </Button>
 
-        <Button type="button" onClick={tokenService.createLongLife}>
+        <Button type="button" onClick={tokenService.refreshToken}>
           Refresh
         </Button>
       </motion.form>

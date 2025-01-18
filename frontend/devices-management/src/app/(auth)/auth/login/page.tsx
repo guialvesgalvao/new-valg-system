@@ -4,8 +4,15 @@ import { LoginForm } from "@/components/forms/login-form";
 import { AuthTitle } from "../_components/auth-title";
 import { RedirectText } from "../../../../components/redirect-text";
 import { AuthPageContent } from "../_components/auth-page-content";
+import { cookies } from "next/headers";
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const refreshToken = await cookies().then((response) => {
+    return response.get("refreshToken");
+  });
+
+  console.log("refreshToken", refreshToken);
+
   return (
     <AuthPageContent>
       <AuthTitle
