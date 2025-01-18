@@ -24,7 +24,10 @@ class AuthService extends BaseService<AuthRepository> {
       this._validateEmail(email);
       this._validatePassword(password);
 
-      const { accessToken } = await this.repository.login({ email, password });
+      const { accessToken } = await this.repository.login({
+        email,
+        password,
+      });
 
       if (!accessToken) {
         throw new Error("Invalid access token");

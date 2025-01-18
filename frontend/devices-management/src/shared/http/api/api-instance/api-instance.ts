@@ -32,8 +32,11 @@ class ApiInstance {
   private _defaultSettings(baseUrl: string): CreateAxiosDefaults {
     return {
       baseURL: baseUrl,
-      withCredentials: false,
+      withCredentials: true,
       timeout: 5000,
+      headers: {
+        "Content-Type": "application/json",
+      },
     };
   }
 
