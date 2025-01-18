@@ -1,0 +1,19 @@
+{
+  "GetStartedTitle": "Comece agora",
+  "GetStartedDescription": "Comece a usar o sistema agora mesmo",
+  "GetStartedOrder1": "Crie sua conta",
+  "GetStartedOrder2": "Configure seu perfil",
+  "GetStartedOrder3": "Gerencie suas api-keys",
+
+  "LoginTitle": "Login",
+  "LoginDescription": "Faça login para acessar o sistema",
+  "LoginNoAccount": "Não tem uma conta?",
+  "LoginCreateAccount": "Crie uma conta",
+  "LoginForgotPassword": "Esqueceu sua senha?",
+
+  "RegisterTitle": "Registro",
+  "RegisterDescription": "Crie uma conta para acessar o sistema",
+  "RegisterAlreadyAccount": "Já tem uma conta?",
+  "RegisterLogin": "Faça login",
+  "RegisterTerms": "Ao clicar em criar conta, você concorda com nossos termos de uso e política de privacidade"
+}
