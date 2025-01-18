@@ -5,8 +5,13 @@ import { generateDateForExpire } from "../shared/helpers/generateDateForExpire";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { SessionRepository } from "../repositories/SessionRepository";
 import { JWT_LONG_SECRET, OTP_SECRET } from "..";
-import { DEFAULT_ACCESS_TOKEN_DURATION, LOG_LIFE_ACCESS_TOKEN_DURATION, OTP_DURATION, REFRESH_TOKEN_DURATION } from "../config/defaultConfigs";
-import { totp } from 'otplib'
+import {
+  DEFAULT_ACCESS_TOKEN_DURATION,
+  LOG_LIFE_ACCESS_TOKEN_DURATION,
+  OTP_DURATION,
+  REFRESH_TOKEN_DURATION,
+} from "../config/defaultConfigs";
+import { totp } from "otplib";
 export class Token {
   userId: number;
 
@@ -47,7 +52,7 @@ export class Token {
       accessTokenExpiresDate,
       refreshTokenExpiresDate,
       OTPCode,
-      OTPExpiresDate
+      OTPExpiresDate,
     };
   }
 
@@ -87,13 +92,10 @@ export class Token {
 
       const session = new SessionRepository();
 
-      console.log("token Recebido aqui 2", accessToken, this.userId);
-
       const validateToken = await session.getAccessToken(
         decoded.userId,
         accessToken
       );
-      console.log("token Recebido aqui 2", validateToken);
 
       if (!validateToken) return null;
 
