@@ -11,8 +11,6 @@ export default async function LoginPage() {
     return response.get("refreshToken");
   });
 
-  console.log("refreshToken", refreshToken);
-
   return (
     <AuthPageContent>
       <AuthTitle

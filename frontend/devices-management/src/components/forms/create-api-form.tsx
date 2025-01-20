@@ -23,7 +23,6 @@ import { Button } from "../ui/button";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
 
-import { tokenService } from "@/shared/http/factories/token-factory";
 import { CreateLongLifeResponse } from "@/shared/http/repositories/token-repository";
 
 interface ICreateApiFormProps {
@@ -53,10 +52,10 @@ export function CreateApiForm(props: Readonly<ICreateApiFormProps>) {
         description: "Please wait while we create your API.",
       });
 
-      const response = await tokenService.createLongLife();
+      // const response = await tokenService.createLongLife();
 
       form.reset();
-      if (onSave) onSave(response);
+      // if (onSave) onSave(response);
 
       toast.success("API created successfully!", {
         id: "create-api",

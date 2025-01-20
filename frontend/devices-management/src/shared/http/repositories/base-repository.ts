@@ -23,18 +23,22 @@ class BaseRepository {
     error: unknown,
     defaultMessage: string = "Ocorreu um erro inesperado"
   ): Error {
+    if (error instanceof AggregateError) {
+      const errorMessage = error.message || defaultMessage;
+
+      return new Error(errorMessage);
+    }
+
     if (error instanceof AxiosError) {
       const errorMessage = error.response?.data?.message || defaultMessage;
-      console.error("Erro Axios:", errorMessage, error.response);
+
       return new Error(errorMessage);
     }
 
     if (error instanceof Error) {
-      console.error("Erro genérico:", error.message, error);
       return new Error(error.message);
     }
 
-    console.error("Erro desconhecido:", error);
     return new Error(defaultMessage);
   }
 }

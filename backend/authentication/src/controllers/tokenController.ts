@@ -44,7 +44,9 @@ async function createLongLifeToken(req: Request, res: Response): Promise<void> {
 }
 
 async function refreshToken(req: Request, res: Response): Promise<void> {
-  const refreshToken = req.cookies?.refreshToken;
+  const body = req.body;
+
+  const refreshToken = body?.refreshToken ?? req.cookies?.refreshToken;
 
   if (!refreshToken) {
     res.status(500).json({ error: "Refresh Token não informado" });
@@ -72,6 +74,13 @@ async function refreshToken(req: Request, res: Response): Promise<void> {
     const newAccessToken = await token.updateAccessToken(userSession.id);
 
     if (newAccessToken) {
+      res.cookie("accessToken", newAccessToken, {
+        path: "/",
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 15 * 60 * 1000, // 15 minutes
+      });
+
       res.status(200).json({ token: newAccessToken });
       return;
     }

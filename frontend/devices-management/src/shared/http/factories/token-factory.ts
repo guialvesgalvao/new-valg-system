@@ -6,7 +6,7 @@ import { TokenRepository } from "../repositories/token-repository";
 import { TokenService } from "../services/token-service";
 
 const initializeTokenService = (): TokenService => {
-  const baseURL = process.env.NEXT_PUBLIC_API_URL + "/token";
+  const baseURL = process.env.NEXT_PUBLIC_EXTERNAL_API_URL + "/token";
   const api = new ApiInstance(baseURL, {
     withCredentials: true,
     timeout: 5000,
@@ -15,9 +15,9 @@ const initializeTokenService = (): TokenService => {
     },
   });
 
-  const interceptors = new AuthApiInterceptors(api);
+  // const interceptors = new AuthApiInterceptors(api);
 
-  const service = new ApiService(api.instance, interceptors);
+  const service = new ApiService(api.instance);
   const repository = new TokenRepository(service);
 
   return new TokenService(repository);

@@ -1,3 +1,4 @@
+import { AxiosError } from "axios";
 import BaseRepository from "../repositories/base-repository";
 
 export class BaseService<T extends BaseRepository> {
@@ -26,6 +27,10 @@ export class BaseService<T extends BaseRepository> {
 
     if (error instanceof Error) {
       return error;
+    }
+
+    if (error instanceof AxiosError) {
+      return new Error(error.response?.data?.message || defaultMessage);
     }
 
     return new Error(defaultMessage);

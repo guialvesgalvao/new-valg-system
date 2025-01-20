@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { ERROR_VALIDATION_MESSAGES } from "./strings-validation";
-import { PHONE_REGEX } from "./validations-const";
 
 const nameSchema = z
   .string({
@@ -10,7 +9,6 @@ const nameSchema = z
 
 const phoneSchema = z
   .string()
-  .regex(PHONE_REGEX, ERROR_VALIDATION_MESSAGES.phone.invalid)
   .optional();
 
 const emailSchema = z
