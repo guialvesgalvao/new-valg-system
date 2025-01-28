@@ -22,7 +22,6 @@ import {
 import { UserRoundPlus } from "lucide-react";
 import { FieldSpacer } from "./field-spacer";
 import { toast } from "sonner";
-import { authService } from "@/shared/http/factories/auth-factory";
 
 import { AppPath } from "@/path";
 import { motion } from "framer-motion";
@@ -56,13 +55,18 @@ export function RegisterForm() {
         description: "Please wait while we register you.",
       });
 
-      await authService.register({
-        name,
-        phone,
-        email,
-        password,
-        confirmPassword,
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, phone, email, password, confirmPassword }),
       });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message);
+      }
 
       toast.success("Registered successfully!", {
         id: "register",
@@ -125,7 +129,6 @@ export function RegisterForm() {
                     maxLength={15}
                     defaultCountry="BR"
                     onChange={(phone) => {
-                      console.log({ phone });
                       field.onChange(phone);
                     }}
                   />

@@ -21,7 +21,7 @@ import {
   ForgotPasswordValidationType,
 } from "@/shared/validations/forgot-password-validation";
 import { toast } from "sonner";
-import { authService } from "@/shared/http/factories/auth-factory";
+
 import { motion } from "framer-motion";
 
 export function ForgotPasswordForm() {
@@ -43,8 +43,6 @@ export function ForgotPasswordForm() {
         id: "forgot-password",
         description: "Please wait while we send you an email.",
       });
-
-      await authService.forgotPassword(email);
 
       toast.success("Email sent successfully!", {
         id: "forgot-password",

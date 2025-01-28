@@ -51,7 +51,14 @@ async function loginUser(req: Request, res: Response): Promise<void> {
         path: "/",
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      });
+
+      res.cookie("accessToken", accessToken, {
+        path: "/",
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 15 * 60 * 1000, // 15 minutes
       });
 
       res.status(200).json({ accessToken, refreshToken });

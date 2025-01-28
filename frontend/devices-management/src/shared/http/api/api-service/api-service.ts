@@ -1,4 +1,4 @@
-import { AxiosInstance } from "axios";
+import { AxiosInstance, AxiosResponse } from "axios";
 import ApiInterceptors from "../api-interceptors/api-interceptors";
 
 class ApiService {
@@ -41,24 +41,24 @@ class ApiService {
     }
   }
 
-  async get<T>(url: string): Promise<T> {
+  async get<T>(url: string): Promise<AxiosResponse<T>> {
     const response = await this._api.get<T>(url);
-    return response.data;
+    return response;
   }
 
-  async post<T, D = unknown>(url: string, data?: D): Promise<T> {
+  async post<T, D = unknown>(url: string, data?: D): Promise<AxiosResponse<T>> {
     const response = await this._api.post<T>(url, data);
-    return response.data;
+    return response;
   }
 
-  async patch<T, D>(url: string, data: D): Promise<T> {
+  async patch<T, D>(url: string, data: D): Promise<AxiosResponse<T>> {
     const response = await this._api.patch<T>(url, data);
-    return response.data;
+    return response;
   }
 
-  async delete<T>(url: string): Promise<T> {
+  async delete<T>(url: string): Promise<AxiosResponse<T>> {
     const response = await this._api.delete<T>(url);
-    return response.data;
+    return response;
   }
 }
 

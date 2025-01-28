@@ -7,21 +7,27 @@ export interface CreateLongLifeResponse {
 }
 
 export interface RefreshTokenResponse {
-  accessToken: string;
+  token: string;
 }
 
 class TokenRepository extends BaseRepository {
-  async refreshToken(): Promise<RefreshTokenResponse> {
+  async refreshToken(token?: string) {
     try {
-      return await this.api.post<RefreshTokenResponse>("/refresh");
+      if (!token) {
+        return await this.api.post<RefreshTokenResponse>("/refresh");
+      }
+
+      return await this.api.post<RefreshTokenResponse>("/refresh", {
+        refreshToken: token,
+      });
     } catch (error) {
       throw this.createErrorMessage(error, "Erro ao atualizar o token.");
     }
   }
 
-  async createLongLife(): Promise<CreateLongLifeResponse> {
+  async createLongLife() {
     try {
-      return await this.api.post("/long-life");
+      return await this.api.post<CreateLongLifeResponse>("/long-life");
     } catch (error) {
       throw this.createErrorMessage(
         error,

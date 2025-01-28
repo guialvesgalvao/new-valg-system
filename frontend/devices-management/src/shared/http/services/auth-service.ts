@@ -2,11 +2,10 @@ import {
   AuthRepository,
   RegisterRepositoryParams,
   LoginRepositoryParams,
-  LoginRepositoryResponse,
 } from "../repositories/auth-repository";
 import { BaseService } from "./base-service";
 
-interface RegisterServiceParams extends RegisterRepositoryParams {
+export interface RegisterServiceParams extends RegisterRepositoryParams {
   confirmPassword: string;
 }
 
@@ -17,23 +16,17 @@ class AuthService extends BaseService<AuthRepository> {
    * @param password - Senha do usuário.
    * @returns Dados do usuário autenticado.
    */
-  async login(data: LoginRepositoryParams): Promise<void> {
+  async login(data: LoginRepositoryParams) {
     const { email, password } = data;
 
     try {
       this._validateEmail(email);
       this._validatePassword(password);
 
-      const { accessToken } = await this.repository.login({
+      return await this.repository.login({
         email,
         password,
       });
-
-      if (!accessToken) {
-        throw new Error("Invalid access token");
-      }
-
-      localStorage.setItem("accessToken", accessToken);
     } catch (error) {
       throw this.getErrorMessage(error, "Login failed");
     }
@@ -46,7 +39,7 @@ class AuthService extends BaseService<AuthRepository> {
    * @param confirmPassword - Confirmação da senha.
    * @returns Dados do usuário registrado.
    */
-  async register(data: RegisterServiceParams): Promise<void> {
+  async register(data: RegisterServiceParams) {
     const { email, password, confirmPassword } = data;
 
     try {

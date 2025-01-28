@@ -7,8 +7,6 @@ export interface RegisterRepositoryParams {
   password: string;
 }
 
-export interface RegisterRepositoryResponse {}
-
 export interface LoginRepositoryParams {
   email: string;
   password: string;
@@ -19,7 +17,7 @@ export interface LoginRepositoryResponse {
 }
 
 class AuthRepository extends BaseRepository {
-  async login(data: LoginRepositoryParams): Promise<LoginRepositoryResponse> {
+  async login(data: LoginRepositoryParams) {
     const { email, password } = data;
 
     try {
@@ -32,7 +30,7 @@ class AuthRepository extends BaseRepository {
     }
   }
 
-  async register(data: RegisterRepositoryParams): Promise<void> {
+  async register(data: RegisterRepositoryParams) {
     const { name, phone, email, password } = data;
 
     try {
@@ -47,7 +45,7 @@ class AuthRepository extends BaseRepository {
     }
   }
 
-  async logout(): Promise<void> {
+  async logout() {
     try {
       return await this.api.post("/logout");
     } catch (error) {
@@ -55,7 +53,7 @@ class AuthRepository extends BaseRepository {
     }
   }
 
-  async forgotPassword(email: string): Promise<void> {
+  async forgotPassword(email: string) {
     try {
       return await this.api.post("/forgot-password", { email });
     } catch (error) {

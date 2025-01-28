@@ -1,8 +1,4 @@
-import {
-  CreateLongLifeResponse,
-  RefreshTokenResponse,
-  TokenRepository,
-} from "../repositories/token-repository";
+import { TokenRepository } from "../repositories/token-repository";
 import { BaseService } from "./base-service";
 
 class TokenService extends BaseService<TokenRepository> {
@@ -14,17 +10,15 @@ class TokenService extends BaseService<TokenRepository> {
     this.refreshToken = this.refreshToken.bind(this);
   }
 
-  async refreshToken(): Promise<RefreshTokenResponse> {
+  async refreshToken(token?: string) {
     try {
-      return await this.repository.refreshToken();
+      return await this.repository.refreshToken(token);
     } catch (error) {
       throw this.getErrorMessage(error, "Error updating token.");
     }
   }
 
-  async createLongLife(): Promise<CreateLongLifeResponse> {
-    console.log(this);
-
+  async createLongLife() {
     try {
       return await this.repository.createLongLife();
     } catch (error) {
